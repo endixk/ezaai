@@ -10,11 +10,11 @@ The user manual and tutorial are available in [http://leb.snu.ac.kr/ezaai](http:
 ## Requirements
 ### Prodigal 
 
-([Hyatt D, Chen G-L, LoCascio PF, Land ML, Larimer FW et al. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC bioinformatics 2010;11(1):119 doi: 10.1186/1471-2105-11-119](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-119))
+[Hyatt D, Chen G-L, LoCascio PF, Land ML, Larimer FW et al. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC bioinformatics 2010;11(1):119 doi: 10.1186/1471-2105-11-119](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-119)
 
 ### MMseqs2 
 
-([Steinegger M, Söding J. MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nature biotechnology 2017;35(11):1026-1028 https://doi.org/10.1038/nbt.3988](https://www.nature.com/articles/nbt.3988))
+[Steinegger M, Söding J. MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nature biotechnology 2017;35(11):1026-1028 https://doi.org/10.1038/nbt.3988](https://www.nature.com/articles/nbt.3988)
 
 ## Available modules
 ## extract	
