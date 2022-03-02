@@ -12,8 +12,8 @@ public abstract class ExecHandler {
 	
 	protected void init(String job) {
 		this.job = job;
-		this.args = new ArrayList<String>();
-		this.argMap = new HashMap<String, String>();
+		if(this.args == null) this.args = new ArrayList<String>();
+		if(this.argMap == null) this.argMap = new HashMap<String, String>();
 	}
 	
 	protected void addArgument(String opt, Object val) {

@@ -238,11 +238,9 @@ public class ProcCalcPairwiseAAI {
 
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			(new File(faa1)).delete();
 			(new File(faa1 + ".pin")).delete();
 			(new File(faa1 + ".phr")).delete();
 			(new File(faa1 + ".psq")).delete();
-			(new File(faa2)).delete();
 			(new File(faa2 + ".pin")).delete();
 			(new File(faa2 + ".phr")).delete();
 			(new File(faa2 + ".psq")).delete();
@@ -369,8 +367,6 @@ public class ProcCalcPairwiseAAI {
 		
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			(new File(faa1)).delete();
-			(new File(faa2)).delete();
 			FileUtils.deleteDirectory(new File(TMPDIR + GenericConfig.SESSION_UID + "_MM"));
 			FileUtils.deleteDirectory(new File(TMPDIR + GenericConfig.SESSION_UID + "_tmp"));
 		}
@@ -426,8 +422,6 @@ public class ProcCalcPairwiseAAI {
 		
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			(new File(faa1)).delete();
-			(new File(faa2)).delete();
 			FileUtils.deleteDirectory(new File(TMPDIR + GenericConfig.SESSION_UID + "_DM"));
 		//	FileUtils.deleteDirectory(TMPDIR + GenericConfig.SESSION_UID + "_tmp");
 		}

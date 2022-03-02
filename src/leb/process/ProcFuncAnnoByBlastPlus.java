@@ -197,9 +197,11 @@ public class ProcFuncAnnoByBlastPlus {
 		return execute(dbFileName, inFileName, true);
 	}
 	public List<Blast6FormatHitDomain> execute(String dbFileName, String inFileName, boolean verbose) throws IOException{
-		BlastPlusWrapper blast = new BlastPlusWrapper();//It should be changable
-
+		BlastPlusWrapper blast = new BlastPlusWrapper(programPath);//It should be changable
+		
 		blast.setProgramPath(programPath);
+		
+		blast.setOutFmt(outFmt);
 		blast.setDbFileName(dbFileName);
 		blast.setInFileName(inFileName);
 

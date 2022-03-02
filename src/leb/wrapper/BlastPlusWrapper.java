@@ -8,7 +8,9 @@ public class BlastPlusWrapper extends ExecHandler {
     public static final int OUTPUT_SIMPLE = 7; // simple format
     public static final int OUTPUT_TEXT   = 0; // Has alignment view
 
-    public BlastPlusWrapper() {}
+    public BlastPlusWrapper(String path) {
+    	super.init(path);
+    }
     
     public void setOutFmt(int outputFmt){
         switch (outputFmt) {
