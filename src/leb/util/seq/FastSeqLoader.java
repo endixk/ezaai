@@ -32,6 +32,11 @@ public class FastSeqLoader {
 			DnaSeqDomain domain = fsl.nextSeq();
 			if(domain!=null) list.add(domain);
 		}
+		
+		try {
+			fsl.br.ready();
+			fsl.br.close();
+		} catch (IOException e) {}
 		return list;		
 	}
 	
@@ -67,8 +72,6 @@ public class FastSeqLoader {
 				fastSeqType = null;
 				throw new NullPointerException();				
 			}
-			
-			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -90,7 +93,6 @@ public class FastSeqLoader {
 					return false;
 				}				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -126,7 +128,7 @@ public class FastSeqLoader {
 		}
 		
 		try {
-			while ((line=br.readLine()) != null) {				
+			while ((line=br.readLine()) != null) {		
 				if(line.startsWith(">")){
 					break;
 				}else {
@@ -134,7 +136,6 @@ public class FastSeqLoader {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String seq = sbSeq.toString();
@@ -183,7 +184,6 @@ public class FastSeqLoader {
 				if(line.startsWith("@")) break;
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String seq = sbSeq.toString();

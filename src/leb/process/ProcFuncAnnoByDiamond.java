@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import leb.util.seq.Blast6FormatHitDomain;
-import leb.util.common.Prompt;
-import leb.util.config.GenericConfig;
 import leb.wrapper.DiamondWrapper;
 
 
@@ -106,7 +104,6 @@ public class ProcFuncAnnoByDiamond {
 		if(dir.exists() == false){
 			dir.mkdir();
 		}
-		if(GenericConfig.VERB) Prompt.print("Execution of Diamond makedb will be started.");
 
 		DiamondWrapper diamond = new DiamondWrapper(diamondPath, DiamondWrapper.MAKEDB);
 		diamond.setThreads(threads);
@@ -122,8 +119,6 @@ public class ProcFuncAnnoByDiamond {
 		if(dir.exists() == false){
 			dir.mkdir();
 		}
-
-		if(GenericConfig.VERB) Prompt.print("Execution of Diamond makedb will be started.");
 		DiamondWrapper diamond = new DiamondWrapper(diamondPath, method);//blastx option
 		
 		diamond.setDbFile(dbFileName);
@@ -151,7 +146,6 @@ public class ProcFuncAnnoByDiamond {
 		diamond.setOutFileName(outFileName);
 		diamond.run();
 		
-		if(GenericConfig.VERB) Prompt.print("Execution of diamond finished.");
 		List<Blast6FormatHitDomain> diamondList = parseOutFile(outFileName);
 		
 		//f.deleteOnExit();

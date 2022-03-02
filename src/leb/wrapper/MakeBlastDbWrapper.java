@@ -38,6 +38,7 @@ public class MakeBlastDbWrapper extends ExecHandler {
     }
     
     public void run() {
+    	setParameters();
     	super.exec();
     }
 

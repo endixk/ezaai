@@ -1,7 +1,6 @@
 package leb.wrapper;
 
 import leb.util.common.ExecHandler;
-import leb.util.common.Prompt;
 
 public class MMSeqs2Wrapper extends ExecHandler {
 	
@@ -25,7 +24,6 @@ public class MMSeqs2Wrapper extends ExecHandler {
 		addArgument("createdb");
 		addArgument(inFileName);
 		addArgument(outDbName);
-		Prompt.debug("COMMAND: "+super.getCommandLine());
 		super.exec();
 	}
 	
@@ -42,7 +40,6 @@ public class MMSeqs2Wrapper extends ExecHandler {
 		addArgument("--alignment-mode", alignmentMode);
 //		addArgument("--max-accept", maxAccept);
 		addArgument("--threads", threads);
-		Prompt.debug("COMMAND: "+super.getCommandLine());
 		super.exec();
 	}
 	
@@ -57,7 +54,6 @@ public class MMSeqs2Wrapper extends ExecHandler {
 		addArgument(outAlignName);
 		addArgument(tmpDir);
 		addArgument("--threads", threads);
-		Prompt.debug("COMMAND: "+super.getCommandLine());
 		super.exec();
 	}
 	
@@ -71,7 +67,6 @@ public class MMSeqs2Wrapper extends ExecHandler {
 		addArgument(outDbName);
 		addArgument("--extract-lines", 1);
 		addArgument("--threads", threads);
-		Prompt.debug("COMMAND: "+super.getCommandLine());
 		super.exec();
 	}
 	
@@ -83,7 +78,6 @@ public class MMSeqs2Wrapper extends ExecHandler {
 		addArgument(inAlignName);
 		addArgument(outFileName);
 		addArgument("--threads", threads);
-		Prompt.debug("COMMAND: "+super.getCommandLine());
 		super.exec();
 	}
 	
@@ -92,7 +86,6 @@ public class MMSeqs2Wrapper extends ExecHandler {
 		addArgument("convert2fasta");
 		addArgument(inDbName);
 		addArgument(outFileName);
-		Prompt.debug("COMMAND: "+super.getCommandLine());
 		super.exec();
 	}
 }

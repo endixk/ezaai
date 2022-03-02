@@ -175,30 +175,29 @@ public class EzAAI {
 			}
 			bw.close();
 			
-			// create database
+			// create databases
+			Shell.exec("mkdir /tmp/" + hex);
 			ProcFuncAnnoByMMSeqs2 procMmseqs = new ProcFuncAnnoByMMSeqs2();
 			procMmseqs.setMmseqsPath(path_mmseqs);
-			procMmseqs.executeCreateDb(faaPath, "/tmp/mm");
+			procMmseqs.executeCreateDb(faaPath, "/tmp/" + hex + "/mm");
 			
 			// create label info file
-			Prompt.debug("Writing file /tmp/mm.label");
-			bw = new BufferedWriter(new FileWriter("/tmp/mm.label"));
+			Prompt.debug("Writing file /tmp/" + hex + "/mm.label");
+			bw = new BufferedWriter(new FileWriter("/tmp/" + hex + "/mm.label"));
 			bw.write(label + "\n");
 			bw.close();
 			
 			String[] names = {"mm", "mm.dbtype", "mm.index", "mm.lookup", "mm.source", "mm_h", "mm_h.dbtype", "mm_h.index", "mm.label"};
 			
 			// create .db file
-			String buf = "tar -c -z -f /tmp/" + hex + ".db";
-			for(String name : names) buf += "/tmp/" + name + " ";
-			Shell.exec(buf);
+			String buf = "tar -c -z -f " + "mm.tar.gz";
+			for(String name : names) buf += " " + name;
+			Shell.exec(buf, new File("/tmp/" + hex));			
+			Shell.exec("mv /tmp/" + hex + "/mm.tar.gz " + output);
 			
-			// remove /tmp/mm.*
-			buf = "rm ";
-			for(String name : names) buf += "/tmp/" + name + " ";
-			Shell.exec(buf);
-			
-			Shell.exec("mv /tmp/" + hex + ".db " + output);
+			// remove temporary files
+			for(String name : names) (new File("/tmp/" + hex + "/" + name)).delete();
+			(new File("/tmp/" + hex)).delete();
 			
 			// tidy up
 			(new File(faaPath)).delete();
