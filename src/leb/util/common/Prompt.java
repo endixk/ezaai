@@ -31,7 +31,7 @@ public class Prompt {
 		if(GenericConfig.VERB) print_univ(head, message, 'c');
 	}
 	public static void talk(String message) {
-		talk("VERB", message);
+		talk(GenericConfig.PHEAD, message);
 	}
 	public static void debug(String head, String message) {
 		if(GenericConfig.DEV) print_univ(head, message, 'G');
