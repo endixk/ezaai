@@ -13,13 +13,9 @@ public class MakeBlastDbWrapper extends ExecHandler {
     
     static public int TYPE_DNA = 0;
     static public int TYPE_PROTEIN = 1;
-    
-	public void setProgramPath(String path) {
-		init(path);
-	}
 	
-    public MakeBlastDbWrapper(String dbFileName, int molecule_type) {
-        init("makeblastdb");
+    public MakeBlastDbWrapper(String path, String dbFileName, int molecule_type) {
+        init(path);
         this.dbFileName = dbFileName;
     	if (molecule_type == TYPE_PROTEIN) addArgument("-dbtype", "prot");
     	else addArgument("-dbtype", "nucl");
