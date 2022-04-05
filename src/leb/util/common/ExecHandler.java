@@ -34,7 +34,6 @@ public abstract class ExecHandler {
 	}
 	
 	protected String[] exec() {
-		String[] carr = {"/bin/bash", "-c", getCommandLine()};
-		return Shell.exec(carr);
+		return Shell.exec(getCommandLine());
 	}
 }

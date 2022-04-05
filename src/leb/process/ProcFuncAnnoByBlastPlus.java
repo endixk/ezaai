@@ -47,6 +47,8 @@ public class ProcFuncAnnoByBlastPlus {
 	
 	private String programPath = null;
 	
+	private String blastdbPath = null;
+	
 	public String getTmpDir() {
 		return tmpDir;
 	}
@@ -183,11 +185,19 @@ public class ProcFuncAnnoByBlastPlus {
 		this.programPath = programPath;
 	}
 	
+	public String getBlastdbPath() {
+		return blastdbPath;
+	}
+	
+	public void setBlastdbPath(String blastdbPath) {
+		this.blastdbPath = blastdbPath;
+	}
+	
 	public void executeMakeBlastDb(String inFileName, int dbType) throws IOException{
 		executeMakeBlastDb(inFileName, dbType, true);
 	}
 	public void executeMakeBlastDb(String inFileName, int dbType, boolean verbose) throws IOException{
-		MakeBlastDbWrapper blast = new MakeBlastDbWrapper(inFileName, dbType);
+		MakeBlastDbWrapper blast = new MakeBlastDbWrapper(blastdbPath, inFileName, dbType);
 		blast.setOutFileNames(inFileName);
 		blast.run();
 	

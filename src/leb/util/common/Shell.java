@@ -16,7 +16,11 @@ public class Shell {
 	public void execute(String command) {
 		Prompt.debug("exec: " + ANSIHandler.wrapper(command, 'B')); 
 		try{
-			process = Runtime.getRuntime().exec(command);
+			processBuilder = new ProcessBuilder();
+			processBuilder.command("/bin/bash", "-c", command);
+			processBuilder.redirectErrorStream(true);
+			
+			process = processBuilder.start();
 			process.waitFor();
 		}
 		catch(IOException ioe) {
@@ -31,7 +35,11 @@ public class Shell {
 	public void execute(String[] cmdarray) {
 		Prompt.debug("exec: " + ANSIHandler.wrapper(String.join(" ", cmdarray), 'B')); 
 		try{
-			process = Runtime.getRuntime().exec(cmdarray);
+			processBuilder = new ProcessBuilder();
+			processBuilder.command("/bin/bash", "-c", String.join(" ", cmdarray));
+			processBuilder.redirectErrorStream(true);
+			
+			process = processBuilder.start();
 			process.waitFor();
 		}
 		catch(IOException ioe) {
@@ -46,8 +54,9 @@ public class Shell {
 		Prompt.debug("exec: " + ANSIHandler.wrapper(dir.getAbsolutePath(), 'g') + "$ " + ANSIHandler.wrapper(command, 'B')); 
 		try{
 			processBuilder = new ProcessBuilder();
-			processBuilder.command("bash", "-c", command);
+			processBuilder.command("/bin/bash", "-c", command);
 			processBuilder.directory(dir);
+			processBuilder.redirectErrorStream(true);
 			
 			process = processBuilder.start();
 			process.waitFor();
@@ -65,10 +74,11 @@ public class Shell {
 		Prompt.debug("exec: " + ANSIHandler.wrapper(dir.getAbsolutePath(), 'g') + "$ " + ANSIHandler.wrapper(String.join(" ", cmdarray), 'B'));  
 		try{
 			processBuilder = new ProcessBuilder();
-			processBuilder.command("bash", "-c", String.join(" ", cmdarray));
+			processBuilder.command("/bin/bash", "-c", String.join(" ", cmdarray));
 			processBuilder.directory(dir);
+			processBuilder.redirectErrorStream(true);
 			
-			process = Runtime.getRuntime().exec(cmdarray);
+			process = processBuilder.start();
 			process.waitFor();
 		}
 		catch(IOException ioe) {
@@ -103,11 +113,12 @@ public class Shell {
 
 		ArrayList<String> alist = new ArrayList<String>();
 		String line = reader.readLine();
-		while(line != null){
+		do {
 			alist.add(line);
 			line = reader.readLine();
-		}
-
+		} while(line != null);
+		alist.add(""); // buffer
+		
 		String[] ls = new String[alist.size()];
 		for(int i = 0; i < alist.size(); i++){
 			ls[i] = alist.get(i);

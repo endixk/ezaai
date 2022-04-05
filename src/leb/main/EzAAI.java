@@ -19,6 +19,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import java.util.Map;
@@ -29,8 +30,8 @@ import org.apache.commons.io.FileUtils;
 import java.util.ArrayList;
 
 public class EzAAI {
-	public static final String VERSION  = "v1.2",
-							   RELEASE  = "Mar. 2022",
+	public static final String VERSION  = "v1.2.1",
+							   RELEASE  = "Apr. 2022",
 							   CITATION = " Kim, D., Park, S. & Chun, J.\n"
 							   			+ " Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity.\n"
 							   			+ " J Microbiol. 59, 476–480 (2021).\n"
@@ -44,7 +45,9 @@ public class EzAAI {
 	
 	final static int PROGRAM_MMSEQS		= 1,
 					 PROGRAM_DIAMOND	= 2,
-					 PROGRAM_BLASTP		= 3;
+					 PROGRAM_BLASTP		= 3,
+					 PROGRAM_PRODIGAL	= 4,
+					 PROGRAM_BLASTDB	= 5;
 	
 	int module = MODULE_INVALID;
 	public EzAAI(String module) {
@@ -58,9 +61,16 @@ public class EzAAI {
 	String input1 = null, output = null; // universal
 	boolean outExists = false;
 	boolean seqNucl = true; // convert
-	String path_prodigal = "prodigal"; // extract
+	
+	// binary paths
+	String  path_prodigal = "prodigal",
+			path_mmseqs   = "mmseqs",
+			path_diamond  = "diamond",
+			path_blastp   = "blastp",
+			path_blastdb  = "makeblastdb";
+	
 	String label = null; // convert, extract
-	String input2 = null, path_mmseqs = "mmseqs", path_diamond = "diamond", path_blastp = "blastp", mtxout = null; int thread = 10; double identity = 0.4, coverage = 0.5; // calculate
+	String input2 = null, mtxout = null; int thread = 10; double identity = 0.4, coverage = 0.5; // calculate
 	int program = PROGRAM_MMSEQS; // calculate
 	
 	private int parseArguments(String[] args) {
@@ -113,7 +123,7 @@ public class EzAAI {
 			if(arg.get("-m") != null) path_mmseqs = arg.get("-m");
 		}
 		if(module == MODULE_EXTRACT) {
-			if(arg.get("-p") != null) path_prodigal = arg.get("-p");
+		//	if(arg.get("-p") != null) path_prodigal = arg.get("-p");
 			if(arg.get("-l") == null) label = input1;
 			else label = arg.get("-l");
 			if(arg.get("-m") != null) path_mmseqs = arg.get("-m");
@@ -145,17 +155,69 @@ public class EzAAI {
 			if(arg.get("-cov") != null) coverage = Double.parseDouble(arg.get("-cov"));
 			if(arg.get("-mtx") != null) mtxout = arg.get("-mtx");
 			if(arg.get("-t") != null) thread = Integer.parseInt(arg.get("-t"));
-			if(arg.get("-mmseqs") != null) path_mmseqs = arg.get("-mmseqs");
-			if(arg.get("-diamond") != null) path_diamond = arg.get("-diamond");
-			if(arg.get("-blastp") != null) path_blastp = arg.get("-blastp");
 		}
+		
+		if(arg.get("-prodigal") != null) path_prodigal = arg.get("-prodigal");
+		if(arg.get("-mmseqs") != null) path_mmseqs = arg.get("-mmseqs");
+		if(arg.get("-diamond") != null) path_diamond = arg.get("-diamond");
+		if(arg.get("-blastp") != null) path_blastp = arg.get("-blastp");
+		if(arg.get("-makeblastdb") != null) path_blastdb = arg.get("-makeblastdb");
+		
 		return 0;
-	}	
+	}
+	
+	private boolean checkProgram(int program) throws IOException {	
+		boolean sane = true;
+		
+		switch(program) {
+		case PROGRAM_MMSEQS:
+			sane &= Shell.exec(path_mmseqs + " -h")[0].contains("MMseqs2");
+			break;
+		case PROGRAM_DIAMOND:
+			sane &= Shell.exec(path_diamond + " help")[0].contains("diamond");
+			break;
+		case PROGRAM_BLASTP:
+			sane &= Shell.exec(path_blastp + " -h")[1].contains("blastp");
+			break;
+		case PROGRAM_PRODIGAL:
+			sane &= Shell.exec(path_prodigal + " -h")[1].contains("prodigal");
+			break;
+		case PROGRAM_BLASTDB:
+			sane &= Shell.exec(path_blastdb + " -h")[1].contains("makeblastdb");
+			break;
+		}
+
+		return sane;
+	}
+	private int checkDependency(int module, int program) throws IOException {
+		Prompt.talk("Checking dependencies...");
+		
+		switch(module) {
+		case MODULE_CONVERT:
+			if(!checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
+			break;
+		case MODULE_EXTRACT:
+			if(!checkProgram(PROGRAM_PRODIGAL)) return PROGRAM_PRODIGAL;
+			if(!checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
+			break;
+		case MODULE_CALCULATE:
+			if(program == PROGRAM_DIAMOND) if(!checkProgram(PROGRAM_DIAMOND)) return PROGRAM_DIAMOND;
+			if(program == PROGRAM_BLASTP) {
+				if(!checkProgram(PROGRAM_BLASTP)) return PROGRAM_BLASTP;
+				if(!checkProgram(PROGRAM_BLASTDB)) return PROGRAM_BLASTDB;
+			}
+			if(!checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
+			break;
+		default:
+			break;
+		}
+		
+		return 0;
+	}
 	
 //	@SuppressWarnings("unchecked")
-	private int runConvert(String[] args) {
+	private int runConvert() {
 		Prompt.debug("EzAAI - convert module");
-		if(parseArguments(args) < 0) return -1;
 		
 		Prompt.print("Converting given CDS file into profile database... ("+input1+" -> "+output+")");
 		String hex = Long.toHexString(new Random().nextLong());
@@ -212,9 +274,8 @@ public class EzAAI {
 		return 0;
 	}
 	
-	private int runExtract(String[] args) {
+	private int runExtract() {
 		Prompt.debug("EzAAI - extract module");
-		if(parseArguments(args) < 0) return -1;
 		
 		try {
 			Prompt.print("Running prodigal on genome " + input1 + "...");
@@ -258,9 +319,8 @@ public class EzAAI {
 		return 0;
 	}
 	
-	private int runCalculate(String[] args) {
+	private int runCalculate() {
 		Prompt.debug("EzAAI - calculate module");
-		if(parseArguments(args) < 0) return -1;
 		
 		try {
 			// prepare profiles
@@ -341,6 +401,7 @@ public class EzAAI {
 						break;
 					case PROGRAM_BLASTP:
 						procAAI.setPath(path_blastp);
+						procAAI.setDbpath(path_blastdb);
 						procAAI.setMode(ProcCalcPairwiseAAI.MODE_BLASTP);
 						break;
 					}
@@ -391,9 +452,8 @@ public class EzAAI {
 		return 0;
 	}
 	
-	private int runCluster(String[] args) {
+	private int runCluster() {
 		Prompt.debug("EzAAI - cluster module");
-		parseArguments(args);
 		
 		// parse input file
 		Map<Integer, Integer> imap = new HashMap<Integer, Integer>();
@@ -475,12 +535,28 @@ public class EzAAI {
 		return 0;
 	}
 	
-	private int run(String[] args) {
+	private int run(String[] args) throws IOException {
+		if(parseArguments(args) < 0) return -1;
+		
+		switch(checkDependency(module, program)) {
+		case PROGRAM_MMSEQS:
+			Prompt.error("Failed to resolve MMSeqs2 binary. Please check the given path: " + ANSIHandler.wrapper(path_mmseqs, 'g')); return -1;
+		case PROGRAM_DIAMOND:
+			Prompt.error("Failed to resolve DIAMOND binary. Please check the given path: " + ANSIHandler.wrapper(path_diamond, 'g')); return -1;
+		case PROGRAM_BLASTP:
+			Prompt.error("Failed to resolve BLASTp+ binary. Please check the given path: " + ANSIHandler.wrapper(path_blastp, 'g')); return -1;
+		case PROGRAM_PRODIGAL:
+			Prompt.error("Failed to resolve Prodigal binary. Please check the given path: " + ANSIHandler.wrapper(path_prodigal, 'g')); return -1;
+		case PROGRAM_BLASTDB:
+			Prompt.error("Failed to resolve makeblastdb binary. Please check the given path: " + ANSIHandler.wrapper(path_blastdb, 'g')); return -1;
+		default: break;
+		}
+		
 		switch(module) {
-		case MODULE_CONVERT: 	return runConvert(args);
-		case MODULE_EXTRACT: 	return runExtract(args);
-		case MODULE_CALCULATE: 	return runCalculate(args);
-		case MODULE_CLUSTER:	return runCluster(args);
+		case MODULE_CONVERT: 	return runConvert();
+		case MODULE_EXTRACT: 	return runExtract();
+		case MODULE_CALCULATE: 	return runCalculate();
+		case MODULE_CLUSTER:	return runCluster();
 		default: return -1;
 		}
 	}
@@ -565,8 +641,8 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.println(String.format(" %s\t\t%s", "-l", "Taxonomic label for phylogenetic tree"));
-			System.out.println(String.format(" %s\t\t%s", "-p", "Custom path to prodigal binary"));
-			System.out.println(String.format(" %s\t\t%s", "-m", "Custom path to MMSeqs2 binary"));
+			System.out.println(String.format(" %s\t%s", "-prodigal", "Custom path to prodigal binary (default: prodigal)"));
+			System.out.println(String.format(" %s\t%s", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)"));
 			System.out.println("");
 		}
 		if(module == MODULE_CONVERT) {
@@ -587,7 +663,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.println(String.format(" %s\t\t%s", "-l", "Taxonomic label for phylogenetic tree"));
-			System.out.println(String.format(" %s\t\t%s", "-m", "Custom path to MMSeqs2 binary"));
+			System.out.println(String.format(" %s\t%s", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)"));
 			System.out.println("");
 		}
 		if(module == MODULE_CALCULATE) {
@@ -615,6 +691,7 @@ public class EzAAI {
 			System.out.println(String.format(" %s\t%s", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)"));
 			System.out.println(String.format(" %s\t%s", "-diamond", "Custom path to DIAMOND binary (default: diamond)"));
 			System.out.println(String.format(" %s\t%s", "-blastp", "Custom path to BLASTp+ binary (default: blastp)"));
+			System.out.println(String.format(" %s\t%s", "-makeblastdb", "Custom path to makeblastdb binary (default: makeblastdb)"));
 			System.out.println("");
 		}
 		if(module == MODULE_CLUSTER) {

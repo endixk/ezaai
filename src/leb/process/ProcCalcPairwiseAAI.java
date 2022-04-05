@@ -39,6 +39,9 @@ public class ProcCalcPairwiseAAI {
 	private String path = null;
 	public void setPath(String path) {this.path = path;}
 	
+	private String dbpath = null; // makeblastdb
+	public void setDbpath(String dbpath) {this.dbpath = dbpath;}
+	
 	public void setIdentity(double identity) {
 		this.identity = identity * 100;
 	}
@@ -221,8 +224,10 @@ public class ProcCalcPairwiseAAI {
 		Prompt.print("Preparing to run reciprocal BLASTp+...");
 		ProcFuncAnnoByBlastPlus procBlast = new ProcFuncAnnoByBlastPlus();
 		if(path == null) path = "blastp";
+		if(dbpath == null) dbpath = "makeblastdb";
 		
 		procBlast.setProgramPath(path);
+		procBlast.setBlastdbPath(dbpath);
 		procBlast.setEvalue(.1);
 		procBlast.setThreads(nthread);
 		procBlast.setKeepBlastOutput(GenericConfig.KEEP);
