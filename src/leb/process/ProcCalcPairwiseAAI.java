@@ -136,7 +136,11 @@ public class ProcCalcPairwiseAAI {
 				} */
 			}
 		}
-
+		
+		if(nval == 0) {
+			Prompt.print("WARNING: No reciprocal hits found.");
+			return Double.NaN;
+		}
 		Prompt.talk(String.format("%d reciprocal hits found. Estimated AAI : %.3f", nval, isum / (nval * 2)));
 		return isum / (nval * 2);
 	}
@@ -198,8 +202,9 @@ public class ProcCalcPairwiseAAI {
 		if(nval == 0) {
 			Prompt.print("WARNING: No reciprocal hits found.");
 			res.add("0");
-			res.add("0.0");
-			res.add("0.0");
+			res.add("NaN");
+			res.add("NaN");
+			return res;
 		}
 
 		Prompt.talk(String.format("%d reciprocal hits found. Estimated AAI : %.3f", nval, isum / (nval * 2)));
