@@ -667,7 +667,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.println(String.format(" %s\t\t%s", "-l", "Taxonomic label for phylogenetic tree"));
 			System.out.println(String.format(" %s\t\t%s", "-t", "Number of CPU threads - multi-threading requires ufasta (default: 1)"));
-			System.out.println(String.format(" %s\t\t%s", "  ", "https://github.com/gmarcais/ufasta"));
+			//System.out.println(String.format(" %s\t\t%s", "  ", "https://github.com/gmarcais/ufasta"));
 			System.out.println(String.format(" %s\t%s", "-prodigal", "Custom path to prodigal binary (default: prodigal)"));
 			System.out.println(String.format(" %s\t%s", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)"));
 			System.out.println(String.format(" %s\t%s", "-ufasta", "Custom path to ufasta binary (default: ufasta)"));
