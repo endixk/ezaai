@@ -4,6 +4,7 @@ import leb.process.ProcCalcPairwiseAAI;
 import leb.process.ProcFuncAnnoByMMSeqs2;
 import leb.process.ProcUPGMA;
 import leb.process.ProcCDSPredictionByProdigal;
+import leb.process.ProcParallelProdigal;
 import leb.util.common.ANSIHandler;
 import leb.util.common.Arguments;
 import leb.util.common.Prompt;
@@ -30,8 +31,8 @@ import org.apache.commons.io.FileUtils;
 import java.util.ArrayList;
 
 public class EzAAI {
-	public static final String VERSION  = "v1.2.1",
-							   RELEASE  = "Apr. 2022",
+	public static final String VERSION  = "v1.2.2",
+							   RELEASE  = "Aug. 2022",
 							   CITATION = " Kim, D., Park, S. & Chun, J.\n"
 							   			+ " Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity.\n"
 							   			+ " J Microbiol. 59, 476–480 (2021).\n"
@@ -47,7 +48,8 @@ public class EzAAI {
 					 PROGRAM_DIAMOND	= 2,
 					 PROGRAM_BLASTP		= 3,
 					 PROGRAM_PRODIGAL	= 4,
-					 PROGRAM_BLASTDB	= 5;
+					 PROGRAM_BLASTDB	= 5,
+					 PROGRAM_UFASTA		= 6;
 	
 	int module = MODULE_INVALID;
 	public EzAAI(String module) {
@@ -61,13 +63,15 @@ public class EzAAI {
 	String input1 = null, output = null; // universal
 	boolean outExists = false;
 	boolean seqNucl = true; // convert
+	boolean multithread = false; // extract
 	
 	// binary paths
 	String  path_prodigal = "prodigal",
 			path_mmseqs   = "mmseqs",
 			path_diamond  = "diamond",
 			path_blastp   = "blastp",
-			path_blastdb  = "makeblastdb";
+			path_blastdb  = "makeblastdb",
+			path_ufasta   = "ufasta";
 	
 	String label = null; // convert, extract
 	String input2 = null, mtxout = null; int thread = 10; double identity = 0.4, coverage = 0.5; // calculate
@@ -127,6 +131,11 @@ public class EzAAI {
 			if(arg.get("-l") == null) label = input1;
 			else label = arg.get("-l");
 			if(arg.get("-m") != null) path_mmseqs = arg.get("-m");
+			if(arg.get("-t") != null) {
+				thread = Integer.parseInt(arg.get("-t"));
+				if(thread > 1) multithread = true;
+			}
+			else thread = 1;
 		}
 		if(module == MODULE_CALCULATE) {
 			if(arg.get("-p") != null) {
@@ -162,6 +171,7 @@ public class EzAAI {
 		if(arg.get("-diamond") != null) path_diamond = arg.get("-diamond");
 		if(arg.get("-blastp") != null) path_blastp = arg.get("-blastp");
 		if(arg.get("-makeblastdb") != null) path_blastdb = arg.get("-makeblastdb");
+		if(arg.get("-ufasta") != null) path_ufasta = arg.get("-ufasta");
 		
 		return 0;
 	}
@@ -174,7 +184,7 @@ public class EzAAI {
 			sane &= Shell.exec(path_mmseqs + " -h")[0].contains("MMseqs2");
 			break;
 		case PROGRAM_DIAMOND:
-			sane &= Shell.exec(path_diamond + " help")[0].contains("diamond");
+			sane &= Shell.exec(path_diamond + " help")[0].contains("diamond v");
 			break;
 		case PROGRAM_BLASTP:
 			sane &= Shell.exec(path_blastp + " -h")[1].contains("blastp");
@@ -185,6 +195,8 @@ public class EzAAI {
 		case PROGRAM_BLASTDB:
 			sane &= Shell.exec(path_blastdb + " -h")[1].contains("makeblastdb");
 			break;
+		case PROGRAM_UFASTA:
+			sane &= Shell.exec(path_ufasta + " -h")[0].contains("Usage");
 		}
 
 		return sane;
@@ -199,6 +211,7 @@ public class EzAAI {
 		case MODULE_EXTRACT:
 			if(!checkProgram(PROGRAM_PRODIGAL)) return PROGRAM_PRODIGAL;
 			if(!checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
+			if(multithread) if(!checkProgram(PROGRAM_UFASTA)) return PROGRAM_UFASTA;
 			break;
 		case MODULE_CALCULATE:
 			if(program == PROGRAM_DIAMOND) if(!checkProgram(PROGRAM_DIAMOND)) return PROGRAM_DIAMOND;
@@ -276,24 +289,32 @@ public class EzAAI {
 	
 	private int runExtract() {
 		Prompt.debug("EzAAI - extract module");
+		String  gffFile = "/tmp/" + GenericConfig.SESSION_UID + ".gff",
+				faaFile = input1 + ".faa",
+				ffnFile = "/tmp/" + GenericConfig.SESSION_UID + ".ffn";
 		
 		try {
 			Prompt.print("Running prodigal on genome " + input1 + "...");
-			ProcCDSPredictionByProdigal procProdigal = new ProcCDSPredictionByProdigal();
-			procProdigal.setProdigalPath(path_prodigal);
-			procProdigal.setGffOutFileName("/tmp/" + GenericConfig.SESSION_UID + ".gff");
-			procProdigal.setFaaOutFileName(input1 + ".faa");
-			procProdigal.setFfnOutFileName("/tmp/" + GenericConfig.SESSION_UID + ".ffn");
-			procProdigal.execute(input1, GenericConfig.DEV);
-			
+			if(multithread) {
+				ProcParallelProdigal procProdigal = new ProcParallelProdigal(input1, faaFile, "/tmp/", path_ufasta, path_prodigal, thread);
+				if(procProdigal.run() < 0) return -1;
+			}
+			else {
+				ProcCDSPredictionByProdigal procProdigal = new ProcCDSPredictionByProdigal();
+				procProdigal.setProdigalPath(path_prodigal);
+				procProdigal.setGffOutFileName(gffFile);
+				procProdigal.setFaaOutFileName(faaFile);
+				procProdigal.setFfnOutFileName(ffnFile);
+				procProdigal.execute(input1, GenericConfig.DEV);
+			}
 			Prompt.talk("EzAAI", "Creating a submodule for converting .faa into .db profile...");
 			EzAAI convertModule = new EzAAI("convert");
-			String[] convertArgs = {"convert", "-i", procProdigal.getFaaOutFileName(), "-s", "prot", "-o", output, "-l", label, "-m", path_mmseqs};
+			String[] convertArgs = {"convert", "-i", faaFile, "-s", "prot", "-o", output, "-l", label, "-m", path_mmseqs};
 			if(convertModule.run(convertArgs) < 0) return -1;
 			
-			(new File(procProdigal.getGffOutFileName())).delete();
-			(new File(procProdigal.getFaaOutFileName())).delete();
-			(new File(procProdigal.getFfnOutFileName())).delete();
+			(new File(gffFile)).delete();
+			(new File(faaFile)).delete();
+			(new File(ffnFile)).delete();
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -549,6 +570,9 @@ public class EzAAI {
 			Prompt.error("Failed to resolve Prodigal binary. Please check the given path: " + ANSIHandler.wrapper(path_prodigal, 'g')); return -1;
 		case PROGRAM_BLASTDB:
 			Prompt.error("Failed to resolve makeblastdb binary. Please check the given path: " + ANSIHandler.wrapper(path_blastdb, 'g')); return -1;
+		case PROGRAM_UFASTA:
+			Prompt.error("Failed to resolve makeblastdb binary. Multi-thread extraction requires ufasta binary.");
+			Prompt.error("ufasta is available at: https://github.com/gmarcais/ufasta"); return -1;
 		default: break;
 		}
 		
@@ -629,20 +653,24 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Extract profile DB from prokaryotic genome sequence using Prodigal", 'g'));
 			System.out.println("");
 		
-			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB> [-l <LABEL> -p <PRODIGAL_PATH> -m <MMSEQS_PATH>]");
+			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB> [-l <LABEL> -t <THREAD>]");
 			System.out.println("");
 		
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.println(String.format(" %s\t\t%s", "-i", "Input prokaryotic genome sequence"));
 			System.out.println(String.format(" %s\t\t%s", "-o", "Output profile database"));
+			
 			System.out.println("");
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.println(String.format(" %s\t\t%s", "-l", "Taxonomic label for phylogenetic tree"));
+			System.out.println(String.format(" %s\t\t%s", "-t", "Number of CPU threads - multi-threading requires ufasta (default: 1)"));
+			System.out.println(String.format(" %s\t\t%s", "  ", "https://github.com/gmarcais/ufasta"));
 			System.out.println(String.format(" %s\t%s", "-prodigal", "Custom path to prodigal binary (default: prodigal)"));
 			System.out.println(String.format(" %s\t%s", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)"));
+			System.out.println(String.format(" %s\t%s", "-ufasta", "Custom path to ufasta binary (default: ufasta)"));
 			System.out.println("");
 		}
 		if(module == MODULE_CONVERT) {
@@ -671,7 +699,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Calculate AAI value from profile databases", 'g'));
 			System.out.println("");
 		
-			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT> [-p <PROGRAM> -id <IDENTITY> -cov <COVERAGE> -mtx <MTX_OUTPUT> -t <THREAD> -bin <PATH>]");
+			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT> [-p <PROGRAM> -t <THREAD> -id <IDENTITY> -cov <COVERAGE> -mtx <MTX_OUTPUT>]");
 			System.out.println("");
 		
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
@@ -684,10 +712,10 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.println(String.format(" %s\t\t%s", "-p", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)"));
+			System.out.println(String.format(" %s\t\t%s", "-t", "Number of CPU threads to use (default: 10)"));
 			System.out.println(String.format(" %s\t\t%s", "-id", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)"));
 			System.out.println(String.format(" %s\t\t%s", "-cov", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)"));
 			System.out.println(String.format(" %s\t\t%s", "-mtx", "Matrix Market formatted output"));
-			System.out.println(String.format(" %s\t\t%s", "-t", "Number of CPU threads to use (default: 10)"));
 			System.out.println(String.format(" %s\t%s", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)"));
 			System.out.println(String.format(" %s\t%s", "-diamond", "Custom path to DIAMOND binary (default: diamond)"));
 			System.out.println(String.format(" %s\t%s", "-blastp", "Custom path to BLASTp+ binary (default: blastp)"));

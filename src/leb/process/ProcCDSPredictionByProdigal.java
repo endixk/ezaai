@@ -9,7 +9,7 @@ public class ProcCDSPredictionByProdigal {
 
 	private String outDir = "/tmp";
 	
-	private String prodigalPath = "/jc/bin/prodigal/Prodigal-2.6.2/prodigal";
+	private String prodigalPath = "prodigal";
 	
     boolean meta = true;//metagenome option or single option
     //"metagenomic" means in this case is that Prodigal uses 
