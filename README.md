@@ -1,4 +1,5 @@
-## Introduction
+# EzAAI: High Throughput Prokaryotic AAI Calculator 
+
 EzAAI is a suite of workflows for improved AAI calculation performance along with the novel module that provides hierarchical clustering analysis and dendrogram representation.
 
  * [Homepage](http://leb.snu.ac.kr/ezaai)
