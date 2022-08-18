@@ -2,19 +2,17 @@
 ## Introduction
 EzAAI is a suite of workflows for improved AAI calculation performance along with the novel module that provides hierarchical clustering analysis and dendrogram representation.
 
-The user manual and tutorial are available in [http://leb.snu.ac.kr/ezaai](http://leb.snu.ac.kr/ezaai).
+ * [Homepage](http://leb.snu.ac.kr/ezaai)
+ * [Publication](https://doi.org/10.1007/s12275-021-1154-0)
 
-## Publication
-[Kim, D., Park, S. & Chun, J. Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity. J Microbiol. 59, 476–480 (2021). https://doi.org/10.1007/s12275-021-1154-0](https://doi.org/10.1007/s12275-021-1154-0)
 
-## Requirements
-### Prodigal 
-
-[Hyatt D, Chen G-L, LoCascio PF, Land ML, Larimer FW et al. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC bioinformatics 2010;11(1):119 doi: 10.1186/1471-2105-11-119](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-119)
-
-### MMseqs2 
-
-[Steinegger M, Söding J. MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nature biotechnology 2017;35(11):1026-1028 https://doi.org/10.1038/nbt.3988](https://www.nature.com/articles/nbt.3988)
+## Quick start with conda
+~~~bash
+conda create -n ezaai -c bioconda -c conda-forge prodigal mmseqs2 openjdk=8
+conda activate ezaai
+wget -O EzAAI.jar http://leb.snu.ac.kr/ezaai/download/jar
+java -jar EzAAI.jar
+~~~
 
 ## Available modules
 ## extract	
