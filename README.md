@@ -1,4 +1,3 @@
-# EzAAI: A Pipeline for High Throughput Calculation of Prokaryotic Average Amino Acid Identity
 ## Introduction
 EzAAI is a suite of workflows for improved AAI calculation performance along with the novel module that provides hierarchical clustering analysis and dendrogram representation.
 
@@ -15,79 +14,58 @@ java -jar EzAAI.jar
 ~~~
 
 ## Available modules
-## extract	
-Extract profile DB from genome using Prodigal
+### `extract`
+ * Extract protein database from genome using Prodigal
 
-#### USAGE: java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB>
+~~~bash
+java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB>
+~~~
 
-Argument
-&nbsp;&nbsp;
-Description
+|Argument|Description|
+|:-:|-----------------|
+|`-i`|Input prokaryotic genome sequence|
+|`-o`|Output database|
 
--i
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Input bacterial genome sequence
+---
 
--o
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Output profile database
+### `calculate`	
+ * Calculate AAI value from protein databases using MMseqs2
 
-## convert	
-Convert CDS FASTA file into profile DB
+~~~bash
+java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o \<OUTPUT>
+~~~
 
-#### USAGE: java -jar EzAAI.jar convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB>
+|Argument|Description|
+|:-:|-----------------|
+|`-i`|First input DB / directory with DBs|
+|`-j`|Second input DB / directory with DBs|
+|`-o`|Output result file|
 
-Argument
-&nbsp;&nbsp;
-Description
+---
 
--i
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Input CDS profile (FASTA format)
+### `convert`	
+ * Convert CDS FASTA file into MMseqs2 database
 
--s
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Sequence type of input file (nucl/prot)
+~~~bash
+java -jar EzAAI.jar convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB>
+~~~
 
--o
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Output profile DB
+|Argument|Description|
+|:-:|-----------------|
+|`-i`|Input CDS profile (FASTA format)|
+|`-s`|Sequence type of input file (nucl/prot)|
+|`-o`|Output database|
 
-## calculate	
-Calculate AAI value from profile databases using MMseqs2
+---
 
-####  USAGE: java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o \<OUTPUT>
+### `cluster`
+ * Hierarchical clustering of taxa with AAI values
 
-Argument
-&nbsp;&nbsp;
-Description
+~~~bash
+java -jar EzAAI.jar cluster -i <AAI_TABLE> -o \<OUTPUT>
+~~~
 
--i
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-First input profile DB / directory with profile DBs
-
--j
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Second input profile DB / directory with profile DBs
-
--o
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Output result file
-
-## cluster	
-Hierarchical clustering of taxa with AAI values
-
-####  USAGE: java -jar EzAAI.jar cluster -i <AAI_TABLE> -o \<OUTPUT>
-EzAAI is a suite of workflows for improved AAI calculation performance along with the novel module that provides hierarchical clustering analysis and dendrogram representation.
-
-Argument
-&nbsp;&nbsp;
-Description
-
--i
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Input EzAAI result file containing all-by-all pairwise AAI values
-
--o
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Output result file
+|Argument|Description|
+|:-:|-----------------|
+|`-i`|Input EzAAI result file containing all-by-all pairwise AAI values|
+|`-o`|Output result file|
