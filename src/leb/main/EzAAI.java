@@ -232,7 +232,7 @@ public class EzAAI {
 	private int runConvert() {
 		Prompt.debug("EzAAI - convert module");
 		
-		Prompt.print("Converting given CDS file into profile database... ("+input1+" -> "+output+")");
+		Prompt.print("Converting given CDS file into protein database... ("+input1+" -> "+output+")");
 		String hex = Long.toHexString(new Random().nextLong());
 		String faaPath = "/tmp/" + hex + ".faa";
 		
@@ -307,7 +307,7 @@ public class EzAAI {
 				procProdigal.setFfnOutFileName(ffnFile);
 				procProdigal.execute(input1, GenericConfig.DEV);
 			}
-			Prompt.talk("EzAAI", "Creating a submodule for converting .faa into .db profile...");
+			Prompt.talk("EzAAI", "Creating a submodule for converting .faa into .db...");
 			EzAAI convertModule = new EzAAI("convert");
 			String[] convertArgs = {"convert", "-i", faaFile, "-s", "prot", "-o", output, "-l", label, "-m", path_mmseqs};
 			if(convertModule.run(convertArgs) < 0) return -1;
@@ -634,9 +634,9 @@ public class EzAAI {
 		
 			System.out.println(ANSIHandler.wrapper("\n Available modules", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Module\t\tDescription", 'c'));
-			System.out.println(String.format(" %s\t%s", "extract",   "Extract profile DB from genome using Prodigal"));
-			System.out.println(String.format(" %s\t%s", "convert",   "Convert CDS FASTA file into profile DB"));
-			System.out.println(String.format(" %s\t%s", "calculate", "Calculate AAI value from profile databases using MMSeqs2"));
+			System.out.println(String.format(" %s\t%s", "extract",   "Extract protein DB from genome using Prodigal"));
+			System.out.println(String.format(" %s\t%s", "convert",   "Convert CDS FASTA file into protein DB"));
+			System.out.println(String.format(" %s\t%s", "calculate", "Calculate AAI value from protein databases using MMSeqs2"));
 			System.out.println(String.format(" %s\t%s", "cluster",   "Hierarchical clustering of taxa with AAI values"));
 			System.out.println("");
 		
@@ -650,7 +650,7 @@ public class EzAAI {
 		}
 		if(module == MODULE_EXTRACT) {
 			System.out.println(ANSIHandler.wrapper("\n EzAAI - extract", 'G'));
-			System.out.println(ANSIHandler.wrapper(" Extract profile DB from prokaryotic genome sequence using Prodigal", 'g'));
+			System.out.println(ANSIHandler.wrapper(" Extract protein DB from prokaryotic genome sequence using Prodigal", 'g'));
 			System.out.println("");
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB> [-l <LABEL> -t <THREAD>]");
@@ -659,7 +659,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.println(String.format(" %s\t\t%s", "-i", "Input prokaryotic genome sequence"));
-			System.out.println(String.format(" %s\t\t%s", "-o", "Output profile database"));
+			System.out.println(String.format(" %s\t\t%s", "-o", "Output protein database"));
 			
 			System.out.println("");
 			
@@ -675,7 +675,7 @@ public class EzAAI {
 		}
 		if(module == MODULE_CONVERT) {
 			System.out.println(ANSIHandler.wrapper("\n EzAAI - convert", 'G'));
-			System.out.println(ANSIHandler.wrapper(" Convert CDS FASTA file into profile DB", 'g'));
+			System.out.println(ANSIHandler.wrapper(" Convert CDS FASTA file into protein DB", 'g'));
 			System.out.println("");
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB> [-l <LABEL>]");
@@ -683,9 +683,9 @@ public class EzAAI {
 		
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-i", "Input CDS profile (FASTA format)"));
+			System.out.println(String.format(" %s\t\t%s", "-i", "Input CDS file (FASTA format)"));
 			System.out.println(String.format(" %s\t\t%s", "-s", "Sequence type of input file (nucl/prot)"));
-			System.out.println(String.format(" %s\t\t%s", "-o", "Output profile DB"));
+			System.out.println(String.format(" %s\t\t%s", "-o", "Output protein DB"));
 			System.out.println("");
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
@@ -696,7 +696,7 @@ public class EzAAI {
 		}
 		if(module == MODULE_CALCULATE) {
 			System.out.println(ANSIHandler.wrapper("\n EzAAI - calculate", 'G'));
-			System.out.println(ANSIHandler.wrapper(" Calculate AAI value from profile databases", 'g'));
+			System.out.println(ANSIHandler.wrapper(" Calculate AAI value from protein databases", 'g'));
 			System.out.println("");
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT> [-p <PROGRAM> -t <THREAD> -id <IDENTITY> -cov <COVERAGE> -mtx <MTX_OUTPUT>]");
@@ -704,8 +704,8 @@ public class EzAAI {
 		
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-i", "First input profile DB / directory with profile DBs"));
-			System.out.println(String.format(" %s\t\t%s", "-j", "Second input profile DB / directory with profile DBs"));
+			System.out.println(String.format(" %s\t\t%s", "-i", "First input protein DB / directory with protein DBs"));
+			System.out.println(String.format(" %s\t\t%s", "-j", "Second input protein DB / directory with protein DBs"));
 			System.out.println(String.format(" %s\t\t%s", "-o",  "Output result file"));
 			System.out.println("");
 			
