@@ -571,7 +571,7 @@ public class EzAAI {
 		case PROGRAM_BLASTDB:
 			Prompt.error("Failed to resolve makeblastdb binary. Please check the given path: " + ANSIHandler.wrapper(path_blastdb, 'g')); return -1;
 		case PROGRAM_UFASTA:
-			Prompt.error("Failed to resolve makeblastdb binary. Multi-thread extraction requires ufasta binary.");
+			Prompt.error("Failed to resolve ufasta binary. Multi-thread extraction requires ufasta binary.");
 			Prompt.error("ufasta is available at: https://github.com/gmarcais/ufasta"); return -1;
 		default: break;
 		}
