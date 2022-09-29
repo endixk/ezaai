@@ -63,7 +63,7 @@ EzAAI convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB>
  * Hierarchical clustering of taxa with AAI values
 
 ~~~bash
-EzAAI cluster -i <AAI_TABLE> -o \<OUTPUT>
+EzAAI cluster -i <AAI_TABLE> -o <OUTPUT>
 ~~~
 
 |Argument|Description|
