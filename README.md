@@ -7,11 +7,11 @@ EzAAI is a suite of workflows for improved AAI calculation performance along wit
 
 
 ## Quick start with conda
+
 ~~~bash
-conda create -n ezaai -c bioconda -c conda-forge prodigal mmseqs2 openjdk=8
+conda create -n ezaai -c bioconda ezaai
 conda activate ezaai
-wget -O EzAAI.jar http://leb.snu.ac.kr/ezaai/download/jar
-java -jar EzAAI.jar
+EzAAI -h
 ~~~
 
 ## Available modules
@@ -19,7 +19,7 @@ java -jar EzAAI.jar
  * Extract protein database from genome using Prodigal
 
 ~~~bash
-java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB>
+EzAAI extract -i <IN_SEQ> -o <OUT_DB>
 ~~~
 
 |Argument|Description|
@@ -33,7 +33,7 @@ java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB>
  * Calculate AAI value from protein databases using MMseqs2
 
 ~~~bash
-java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o \<OUTPUT>
+EzAAI calculate -i <INPUT_1> -j <INPUT_2> -o \<OUTPUT>
 ~~~
 
 |Argument|Description|
@@ -48,7 +48,7 @@ java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o \<OUTPUT>
  * Convert CDS FASTA file into MMseqs2 database
 
 ~~~bash
-java -jar EzAAI.jar convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB>
+EzAAI convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB>
 ~~~
 
 |Argument|Description|
@@ -63,7 +63,7 @@ java -jar EzAAI.jar convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB>
  * Hierarchical clustering of taxa with AAI values
 
 ~~~bash
-java -jar EzAAI.jar cluster -i <AAI_TABLE> -o \<OUTPUT>
+EzAAI cluster -i <AAI_TABLE> -o <OUTPUT>
 ~~~
 
 |Argument|Description|
