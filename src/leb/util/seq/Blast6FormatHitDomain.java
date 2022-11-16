@@ -1,9 +1,6 @@
 package leb.util.seq;
 
 public class Blast6FormatHitDomain {
-
-	public String pfamAccession = null;
-	
 	public String query = null;
 	public String target = null;
 	
@@ -21,14 +18,6 @@ public class Blast6FormatHitDomain {
 	
 	public double evalue = 0;
 	public double bitScore = 0;
-
-	public String getPfamAccession() {
-		return pfamAccession;
-	}
-
-	public void setPfamAccession(String pfamAccession) {
-		this.pfamAccession = pfamAccession;
-	}
 
 	public String getQuery() {
 		return query;
@@ -62,16 +51,8 @@ public class Blast6FormatHitDomain {
 		this.alignmentLength = alignmentLength;
 	}
 
-	public int getMismatch() {
-		return mismatch;
-	}
-
 	public void setMismatch(int mismatch) {
 		this.mismatch = mismatch;
-	}
-
-	public int getGap() {
-		return gap;
 	}
 
 	public void setGap(int gap) {
@@ -94,32 +75,16 @@ public class Blast6FormatHitDomain {
 		this.endInQuery = endInQuery;
 	}
 
-	public int getStartInTarget() {
-		return startInTarget;
-	}
-
 	public void setStartInTarget(int startInTarget) {
 		this.startInTarget = startInTarget;
-	}
-
-	public int getEndInTarget() {
-		return endInTarget;
 	}
 
 	public void setEndInTarget(int endInTarget) {
 		this.endInTarget = endInTarget;
 	}
 
-	public double getEvalue() {
-		return evalue;
-	}
-
 	public void setEvalue(double evalue) {
 		this.evalue = evalue;
-	}
-
-	public double getBitScore() {
-		return bitScore;
 	}
 
 	public void setBitScore(double bitScore) {

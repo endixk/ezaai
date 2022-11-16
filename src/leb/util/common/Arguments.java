@@ -3,18 +3,18 @@ package leb.util.common;
 import java.util.Hashtable;
 
 public class Arguments {
-	public Hashtable<String,String> hash = new Hashtable<String,String>();
-	public String args[] = null;
+	public Hashtable<String,String> hash = new Hashtable<>();
+	public String[] args;
 	
 	int process_next(int index)
 	{
 		if (index==args.length-1) {
-			hash.put(args[index], new String());// for last, just add
+			hash.put(args[index], "");// for last, just add
 			return args.length;
 		}
 		if (args[index+1].startsWith("-"))  {
 			
-			hash.put(args[index], new String());
+			hash.put(args[index], "");
 			return index;
 		}
 		hash.put(args[index],args[index+1]);

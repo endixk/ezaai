@@ -7,10 +7,6 @@ public class DiamondWrapper extends ExecHandler {
 	static public int MAKEDB 	= -1;
 	static public int BLASTX 	= 0;
 	static public int BLASTP 	= 1;
-	
-	public DiamondWrapper(String diamondPath){
-		super.init(diamondPath);
-	}
 		
 	public DiamondWrapper(String diamondPath, int type){
 		super.init(diamondPath);
@@ -43,16 +39,8 @@ public class DiamondWrapper extends ExecHandler {
 		addArgument("--db", dbFileName);
 	}
 	
-	public void setSamOutFile(String samFileName){
-		addArgument("--sam", samFileName);
-	}
-	
 	public void setEvalue(double evalue){
 		addArgument("--evalue", evalue);
-	}
-	
-	public void setScore(double score){
-		addArgument("--min-score", score);
 	}
 	
 	public void setThreads(int threads){

@@ -23,31 +23,10 @@ public class Shell {
 			process = processBuilder.start();
 			process.waitFor();
 		}
-		catch(IOException ioe) {
-			ioe.printStackTrace(); System.exit(1);
+		catch(IOException | InterruptedException e) {
+			e.printStackTrace(); System.exit(1);
 		}
-		catch(InterruptedException ire) {
-			ire.printStackTrace(); System.exit(1);
-		}
-		
-		reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-	}
-	public void execute(String[] cmdarray) {
-		Prompt.debug("exec: " + ANSIHandler.wrapper(String.join(" ", cmdarray), 'B')); 
-		try{
-			processBuilder = new ProcessBuilder();
-			processBuilder.command("/bin/bash", "-c", String.join(" ", cmdarray));
-			processBuilder.redirectErrorStream(true);
-			
-			process = processBuilder.start();
-			process.waitFor();
-		}
-		catch(IOException ioe) {
-			ioe.printStackTrace(); System.exit(1);
-		}
-		catch(InterruptedException ire) {
-			ire.printStackTrace(); System.exit(1);
-		}
+
 		reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	}
 	public void executeFrom(String command, File dir) {
@@ -61,47 +40,11 @@ public class Shell {
 			process = processBuilder.start();
 			process.waitFor();
 		}
-		catch(IOException ioe) {
-			ioe.printStackTrace(); System.exit(1);
-		}
-		catch(InterruptedException ire) {
-			ire.printStackTrace(); System.exit(1);
-		}
-		
-		reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-	}
-	public void executeFrom(String[] cmdarray, File dir) {
-		Prompt.debug("exec: " + ANSIHandler.wrapper(dir.getAbsolutePath(), 'g') + "$ " + ANSIHandler.wrapper(String.join(" ", cmdarray), 'B'));  
-		try{
-			processBuilder = new ProcessBuilder();
-			processBuilder.command("/bin/bash", "-c", String.join(" ", cmdarray));
-			processBuilder.directory(dir);
-			processBuilder.redirectErrorStream(true);
-			
-			process = processBuilder.start();
-			process.waitFor();
-		}
-		catch(IOException ioe) {
-			ioe.printStackTrace(); System.exit(1);
-		}
-		catch(InterruptedException ire) {
-			ire.printStackTrace(); System.exit(1);
-		}
-		reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-	}
-
-	// Print the result of the execution on a console
-	public void print() throws IOException {
-		if(reader == null){
-			Prompt.print("Shell", "No command has been executed");
-			return;
+		catch(IOException | InterruptedException e) {
+			e.printStackTrace(); System.exit(1);
 		}
 
-		String line = reader.readLine();
-		while(line != null){
-			System.out.println(line);
-			line = reader.readLine();
-		}
+		reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	}
 
 	// Return the result of the execution as an array of strings
@@ -111,7 +54,7 @@ public class Shell {
 			return null;
 		}
 
-		ArrayList<String> alist = new ArrayList<String>();
+		ArrayList<String> alist = new ArrayList<>();
 		String line = reader.readLine();
 		do {
 			alist.add(line);
@@ -166,43 +109,14 @@ public class Shell {
 		}
 		return raw;
 	}
-	public static String[] exec(String[] cmd) {
-		String[] raw = null;
-		try{
-			Shell sh = new Shell();
-			sh.execute(cmd);
-			raw = sh.raw();
-			sh.close();
-		}
-		catch(Exception e) {
-			e.printStackTrace(); System.exit(1);
-		}
-		return raw;
-	}
-	public static String[] exec(String cmd, File dir) {
-		String[] raw = null;
+	public static void exec(String cmd, File dir) {
 		try{
 			Shell sh = new Shell();
 			sh.executeFrom(cmd, dir);
-			raw = sh.raw();
 			sh.close();
 		}
 		catch(Exception e) {
 			e.printStackTrace(); System.exit(1);
 		}
-		return raw;
-	}
-	public static String[] exec(String[] cmd, File dir) {
-		String[] raw = null;
-		try{
-			Shell sh = new Shell();
-			sh.executeFrom(cmd, dir);
-			raw = sh.raw();
-			sh.close();
-		}
-		catch(Exception e) {
-			e.printStackTrace(); System.exit(1);
-		}
-		return raw;
 	}
 }

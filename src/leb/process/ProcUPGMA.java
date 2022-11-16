@@ -5,11 +5,11 @@ import java.util.LinkedList;
 
 public class ProcUPGMA {
 	
-	private double[][] dmat = null, umat = null;
-	private List<String>  leaves = new LinkedList<String> ();
-	private List<Double>  depths = new LinkedList<Double> ();
-	private List<Integer> counts = new LinkedList<Integer>();
-	private int N = 0;
+	private double[][] dmat;
+	private final List<String>  leaves = new LinkedList<>();
+	private final List<Double>  depths = new LinkedList<>();
+	private final List<Integer> counts = new LinkedList<>();
+	private int N;
 	
 	public ProcUPGMA(double[][] dmat, List<String> labels) {
 		this.dmat = dmat;
@@ -37,7 +37,7 @@ public class ProcUPGMA {
 		}
 		
 		// compute new distance matrix
-		umat = new double[N-1][N-1];
+		double[][] umat = new double[N - 1][N - 1];
 		int ni = 1;
 		for(int i = 0; i < N; i++) {
 			if(i - mi == 0 || i - mj == 0) continue;
@@ -75,9 +75,7 @@ public class ProcUPGMA {
 		// update distance matrix
 		dmat = new double[N-1][N-1];
 		for(int i = 0; i < N-1; i++) {
-			for(int j = 0; j < N-1; j++) {
-				dmat[i][j] = umat[i][j];
-			}
+			System.arraycopy(umat[i], 0, dmat[i], 0, N - 1);
 		}
 		N--;
 	}

@@ -17,9 +17,9 @@ public class Seqtools {
 			return null;
 		String protein_seq = null;
 		try {
-            DNASequence dnaSequence = null;
-            CompoundSet<NucleotideCompound> dnaCompound = null;
-            CompoundSet<NucleotideCompound> rnaCompound = null;
+            DNASequence dnaSequence;
+            CompoundSet<NucleotideCompound> dnaCompound;
+            CompoundSet<NucleotideCompound> rnaCompound;
             
 		    if(ambiguous){ // set ambiguous DNA compound
 		        dnaCompound = AmbiguityDNACompoundSet.getDNACompoundSet();

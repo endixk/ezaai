@@ -28,9 +28,6 @@ public class MMSeqs2Wrapper extends ExecHandler {
 	}
 	
 	// mmseqs search
-	public void runSearch(String queryDbName, String targetDbName, String outAlignName) {
-		runSearch(queryDbName, targetDbName, outAlignName, "tmp");
-	}
 	public void runSearch(String queryDbName, String targetDbName, String outAlignName, String tmpDir) {
 		addArgument("search");
 		addArgument(queryDbName);
@@ -43,25 +40,8 @@ public class MMSeqs2Wrapper extends ExecHandler {
 		super.exec();
 	}
 	
-	// mmseqs rbh
-	public void runRbh(String inDbName1, String inDbName2, String outAlignName) {
-		runRbh(inDbName1, inDbName2, outAlignName, "tmp");
-	}
-	public void runRbh(String inDbName1, String inDbName2, String outAlignName, String tmpDir) {
-		addArgument("rbh");
-		addArgument(inDbName1);
-		addArgument(inDbName2);
-		addArgument(outAlignName);
-		addArgument(tmpDir);
-		addArgument("--threads", threads);
-		super.exec();
-	}
-	
 	// mmseqs filterdb in out --extract-lines 1
-	public void runFilterdb(String inDbName, String outDbName) {
-		runFilterdb(inDbName, outDbName, "tmp");
-	}
-	public void runFilterdb(String inDbName, String outDbName, String tmpDir) {
+	public void runFilterdb(String inDbName, String outDbName, String ignoredTmpDir) {
 		addArgument("filterdb");
 		addArgument(inDbName);
 		addArgument(outDbName);

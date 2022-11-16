@@ -15,12 +15,8 @@ import java.util.concurrent.Future;
 import java.io.File;
 
 public class ProcParallelProdigal {
-	private String 	input = null,
-					output = null,
-					temp = null,
-					ufasta = null,
-					prodigal = null;
-	private Integer thread = null;
+	private final String input, output, temp, ufasta, prodigal;
+	private final Integer thread;
 	
 	public ProcParallelProdigal(String input, String output, String temp, String ufasta, String prodigal, int thread) {
 		this.input = input;
@@ -33,10 +29,10 @@ public class ProcParallelProdigal {
 	
 	// build split command
 	private String splitCommand() {
-		String command = String.format("%s split -i %s", ufasta, input);
+		StringBuilder command = new StringBuilder(String.format("%s split -i %s", ufasta, input));
 		for(int i = 0; i < thread; i++)
-			command += String.format(" %s_%d.fa", temp + GenericConfig.SESSION_UID, i);
-		return command;
+			command.append(String.format(" %s_%d.fa", temp + GenericConfig.SESSION_UID, i));
+		return command.toString();
 	}
 	
 	// generate thread pool to run prodigal in parallel
@@ -59,11 +55,11 @@ public class ProcParallelProdigal {
 	
 	// build concatenation command
 	private String catCommand() {
-		String command = "cat ";
+		StringBuilder command = new StringBuilder("cat ");
 		for(int i = 0; i < thread; i++)
-			command += String.format("%s_%d.out.fa ", temp + GenericConfig.SESSION_UID, i);
-		command += String.format("> %s", output);
-		return command;
+			command.append(String.format("%s_%d.out.fa ", temp + GenericConfig.SESSION_UID, i));
+		command.append(String.format("> %s", output));
+		return command.toString();
 	}
 	
 	private void clean() {
@@ -89,7 +85,7 @@ public class ProcParallelProdigal {
 }
 
 class ProdigalThread implements Callable<Integer> {
-	String prodigal = null, in = null, out = null;
+	String prodigal, in, out;
 	public ProdigalThread(String prodigal, String in, String out) {
 		this.prodigal = prodigal;
 		this.in = in;

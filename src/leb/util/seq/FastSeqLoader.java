@@ -9,19 +9,17 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
-enum FastSeqType {FASTA, FASTQ;}
+enum FastSeqType {FASTA, FASTQ}
 public class FastSeqLoader {
 	
 	private BufferedReader br = null; //no get setter	
 	private String line = null; //no get setter
 	
 	private FastSeqType fastSeqType = null;
-	private Integer sumReadLength;
-	private Integer seqCount;
 	private Integer minLen;
 	private Integer maxLen;
 	private boolean hasNextSeq = false;
-	private boolean ignoreEmptySeq = false;
+	private final boolean ignoreEmptySeq = false;
 	
 	
 	public static List<DnaSeqDomain> importFileToDomainList(String fileName){				
@@ -36,14 +34,12 @@ public class FastSeqLoader {
 		try {
 			fsl.br.ready();
 			fsl.br.close();
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 		return list;		
 	}
 	
-	public FastSeqType loadSeqFile(File file){
+	public void loadSeqFile(File file){
 		hasNextSeq = true;
-		setSumReadLength(0);
-		setSeqCount(0);
 		minLen = Integer.MAX_VALUE;
 		maxLen = Integer.MIN_VALUE;
 		
@@ -52,10 +48,8 @@ public class FastSeqLoader {
 			
 			String firstLine = null;
 			while((line = br.readLine())!=null){
-				if(line.trim().length()==0) continue; // continue with empty line 
-				else {
+				if(line.trim().length() != 0) {
 					firstLine = line;
-//					br.reset(); // BufferedReader reset to first line
 					break;
 				}
 			}
@@ -75,11 +69,10 @@ public class FastSeqLoader {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return fastSeqType;	
 	}
 
-	public FastSeqType loadSeqFile(String fileName){		
-		return loadSeqFile(new File(fileName));
+	public void loadSeqFile(String fileName){
+		loadSeqFile(new File(fileName));
 	}
 	
 	public boolean hasNextSeq(){
@@ -146,9 +139,9 @@ public class FastSeqLoader {
 		}else{
 			domain.setTitle(title);
 			domain.setSequence(seq);			
-		}							
-		if(domain!=null) setVariables(domain);
-		
+		}
+
+		setVariables(domain);
 		return domain;
 	}
 	
@@ -197,24 +190,13 @@ public class FastSeqLoader {
 		
 		domain.setTitle(title);
 		domain.setSequence(seq);
-		domain.setQuality(qual);
 		
-		if(domain!=null) setVariables(domain);
+		setVariables(domain);
 		return domain;
 	}
 	
-	private void setVariables(DnaSeqDomain domain){		
-		sumReadLength += domain.getSequence().length();
-		seqCount++;
+	private void setVariables(DnaSeqDomain domain){
 		if(minLen > domain.getSequence().length()) minLen = domain.getSequence().length();
 		if(maxLen < domain.getSequence().length()) maxLen = domain.getSequence().length();
-	}
-	
-	public void setSumReadLength(Integer sumReadLength) {
-		this.sumReadLength = sumReadLength;
-	}
-
-	public void setSeqCount(Integer seqCount) {
-		this.seqCount = seqCount;
 	}
 }

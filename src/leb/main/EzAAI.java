@@ -20,7 +20,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import java.util.Map;
@@ -140,12 +139,19 @@ public class EzAAI {
 		if(module == MODULE_CALCULATE) {
 			if(arg.get("-p") != null) {
 				String pstr = arg.get("-p");
-				if(pstr.equals("mmseqs")) program = PROGRAM_MMSEQS;
-				else if(pstr.equals("diamond")) program = PROGRAM_DIAMOND;
-				else if(pstr.equals("blastp")) program = PROGRAM_BLASTP;
-				else {
-					Prompt.error("Invalid program given.");
-					return -1;
+				switch (pstr) {
+					case "mmseqs":
+						program = PROGRAM_MMSEQS;
+						break;
+					case "diamond":
+						program = PROGRAM_DIAMOND;
+						break;
+					case "blastp":
+						program = PROGRAM_BLASTP;
+						break;
+					default:
+						Prompt.error("Invalid program given.");
+						return -1;
 				}
 			}
 			if(arg.get("-j") == null) {
@@ -176,50 +182,50 @@ public class EzAAI {
 		return 0;
 	}
 	
-	private boolean checkProgram(int program) throws IOException {	
+	private boolean checkProgram(int program) {
 		boolean sane = true;
 		
 		switch(program) {
 		case PROGRAM_MMSEQS:
-			sane &= Shell.exec(path_mmseqs + " -h")[0].contains("MMseqs2");
+			sane = Shell.exec(path_mmseqs + " -h")[0].contains("MMseqs2");
 			break;
 		case PROGRAM_DIAMOND:
-			sane &= Shell.exec(path_diamond + " help")[0].contains("diamond v");
+			sane = Shell.exec(path_diamond + " help")[0].contains("diamond v");
 			break;
 		case PROGRAM_BLASTP:
-			sane &= Shell.exec(path_blastp + " -h")[1].contains("blastp");
+			sane = Shell.exec(path_blastp + " -h")[1].contains("blastp");
 			break;
 		case PROGRAM_PRODIGAL:
-			sane &= Shell.exec(path_prodigal + " -h")[1].contains("prodigal");
+			sane = Shell.exec(path_prodigal + " -h")[1].contains("prodigal");
 			break;
 		case PROGRAM_BLASTDB:
-			sane &= Shell.exec(path_blastdb + " -h")[1].contains("makeblastdb");
+			sane = Shell.exec(path_blastdb + " -h")[1].contains("makeblastdb");
 			break;
 		case PROGRAM_UFASTA:
-			sane &= Shell.exec(path_ufasta + " -h")[0].contains("Usage");
+			sane = Shell.exec(path_ufasta + " -h")[0].contains("Usage");
 		}
 
-		return sane;
+		return !sane;
 	}
-	private int checkDependency(int module, int program) throws IOException {
+	private int checkDependency(int module, int program) {
 		Prompt.talk("Checking dependencies...");
 		
 		switch(module) {
 		case MODULE_CONVERT:
-			if(!checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
+			if(checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
 			break;
 		case MODULE_EXTRACT:
-			if(!checkProgram(PROGRAM_PRODIGAL)) return PROGRAM_PRODIGAL;
-			if(!checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
-			if(multithread) if(!checkProgram(PROGRAM_UFASTA)) return PROGRAM_UFASTA;
+			if(checkProgram(PROGRAM_PRODIGAL)) return PROGRAM_PRODIGAL;
+			if(checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
+			if(multithread) if(checkProgram(PROGRAM_UFASTA)) return PROGRAM_UFASTA;
 			break;
 		case MODULE_CALCULATE:
-			if(program == PROGRAM_DIAMOND) if(!checkProgram(PROGRAM_DIAMOND)) return PROGRAM_DIAMOND;
+			if(program == PROGRAM_DIAMOND) if(checkProgram(PROGRAM_DIAMOND)) return PROGRAM_DIAMOND;
 			if(program == PROGRAM_BLASTP) {
-				if(!checkProgram(PROGRAM_BLASTP)) return PROGRAM_BLASTP;
-				if(!checkProgram(PROGRAM_BLASTDB)) return PROGRAM_BLASTDB;
+				if(checkProgram(PROGRAM_BLASTP)) return PROGRAM_BLASTP;
+				if(checkProgram(PROGRAM_BLASTDB)) return PROGRAM_BLASTDB;
 			}
-			if(!checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
+			if(checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
 			break;
 		default:
 			break;
@@ -265,9 +271,9 @@ public class EzAAI {
 			String[] names = {"mm", "mm.dbtype", "mm.index", "mm.lookup", "mm.source", "mm_h", "mm_h.dbtype", "mm_h.index", "mm.label"};
 			
 			// create .db file
-			String buf = "tar -c -z -f " + "mm.tar.gz";
-			for(String name : names) buf += " " + name;
-			Shell.exec(buf, new File("/tmp/" + hex));			
+			StringBuilder buf = new StringBuilder("tar -c -z -f " + "mm.tar.gz");
+			for(String name : names) buf.append(" ").append(name);
+			Shell.exec(buf.toString(), new File("/tmp/" + hex));
 			Shell.exec("mv /tmp/" + hex + "/mm.tar.gz " + output);
 			
 			// remove temporary files
@@ -349,6 +355,7 @@ public class EzAAI {
 			String[] inames, jnames;
 			if(ifile.isDirectory()) {
 				String[] ls = ifile.list();
+				assert ls != null;
 				inames = new String[ls.length];
 				for(int i = 0; i < ls.length; i++) {
 					inames[i] = ifile.getAbsolutePath() + File.separator + ls[i];
@@ -360,6 +367,7 @@ public class EzAAI {
 			}
 			if(jfile.isDirectory()) {
 				String[] ls = jfile.list();
+				assert ls != null;
 				jnames = new String[ls.length];
 				for(int i = 0; i < ls.length; i++) {
 					jnames[i] = jfile.getAbsolutePath() + File.separator + ls[i];
@@ -381,7 +389,7 @@ public class EzAAI {
 			}
 			
 			for(int i = 0 ; i < inames.length; i++) {
-				String faaPath = faaDir + File.separator + "i" + String.valueOf(i) + ".faa";
+				String faaPath = faaDir + File.separator + "i" + i + ".faa";
 				if(dbToFaa(inames[i], faaPath) < 0) return -1;
 				ilist.add(faaPath);
 				
@@ -391,7 +399,7 @@ public class EzAAI {
 				(new File("mm.label")).delete();
 			}
 			for(int j = 0 ; j < jnames.length; j++) {
-				String faaPath = faaDir + File.separator + "j" + String.valueOf(j) + ".faa";
+				String faaPath = faaDir + File.separator + "j" + j + ".faa";
 				if(dbToFaa(jnames[j], faaPath) < 0) return -1;
 				jlist.add(faaPath);
 				
@@ -477,12 +485,13 @@ public class EzAAI {
 		Prompt.debug("EzAAI - cluster module");
 		
 		// parse input file
-		Map<Integer, Integer> imap = new HashMap<Integer, Integer>();
-		List<String> labels = new ArrayList<String>();
-		List<String> bufs = new ArrayList<String>();
+		Map<Integer, Integer> imap = new HashMap<>();
+		List<String> labels = new ArrayList<>();
+		List<String> bufs = new ArrayList<>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(input1));
-			String buf = br.readLine(); // discard header
+			br.readLine(); // discard header
+			String buf;
 			while((buf = br.readLine()) != null) {
 				bufs.add(buf);
 				int id1 = Integer.parseInt(buf.split("\t")[0]), id2 = Integer.parseInt(buf.split("\t")[1]);
@@ -556,7 +565,7 @@ public class EzAAI {
 		return 0;
 	}
 	
-	private int run(String[] args) throws IOException {
+	private int run(String[] args) {
 		if(parseArguments(args) < 0) return -1;
 		
 		switch(checkDependency(module, program)) {
@@ -585,7 +594,7 @@ public class EzAAI {
 		}
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		if(args.length == 0) {
 			printHelp(0);
 			return;
@@ -598,8 +607,7 @@ public class EzAAI {
 			GenericConfig.DEV = true;
 		}
 		if(arg.get("-nc") != null) GenericConfig.NOCOLOR = true;
-		if(arg.get("-nt") != null) GenericConfig.TSTAMP = false;
-		else GenericConfig.TSTAMP = true;
+		GenericConfig.TSTAMP = arg.get("-nt") == null;
 		
 		EzAAI ezAAI = new EzAAI(args[0]);
 		if(arg.get("-h") != null) {
@@ -616,7 +624,6 @@ public class EzAAI {
 		Prompt.print(String.format("EzAAI - %s [%s]", VERSION, RELEASE));
 		if(ezAAI.run(args) < 0) {
 			Prompt.error("Program terminated with error.");
-			return;
 		}
 	}
 	
@@ -624,117 +631,117 @@ public class EzAAI {
 		if(module == MODULE_INVALID) {
 			System.out.println(ANSIHandler.wrapper(String.format("\n EzAAI - %s [%s]", VERSION, RELEASE), 'G'));
 			System.out.println(ANSIHandler.wrapper(" High Throughput Prokaryotic Average Amino acid Identity Calculator", 'g'));
-			System.out.println("");
+			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n Please cite:\n", 'C') + CITATION);
-			System.out.println("");
+			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar <module> [<args>]");
-			System.out.println("");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n Available modules", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Module\t\tDescription", 'c'));
-			System.out.println(String.format(" %s\t%s", "extract",   "Extract protein DB from genome using Prodigal"));
-			System.out.println(String.format(" %s\t%s", "convert",   "Convert CDS FASTA file into protein DB"));
-			System.out.println(String.format(" %s\t%s", "calculate", "Calculate AAI value from protein databases using MMSeqs2"));
-			System.out.println(String.format(" %s\t%s", "cluster",   "Hierarchical clustering of taxa with AAI values"));
-			System.out.println("");
+			System.out.printf(" %s\t%s%n", "extract",   "Extract protein DB from genome using Prodigal");
+			System.out.printf(" %s\t%s%n", "convert",   "Convert CDS FASTA file into protein DB");
+			System.out.printf(" %s\t%s%n", "calculate", "Calculate AAI value from protein databases using MMSeqs2");
+			System.out.printf(" %s\t%s%n", "cluster",   "Hierarchical clustering of taxa with AAI values");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n Miscellaneous", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-nc", "No-color mode"));
-			System.out.println(String.format(" %s\t\t%s", "-nt", "No time stamps"));
-			System.out.println(String.format(" %s\t\t%s", "-v",  "Go verbose"));
-			System.out.println(String.format(" %s\t\t%s", "-h",  "Print help"));
-			System.out.println("");
+			System.out.printf(" %s\t\t%s%n", "-nc", "No-color mode");
+			System.out.printf(" %s\t\t%s%n", "-nt", "No time stamps");
+			System.out.printf(" %s\t\t%s%n", "-v",  "Go verbose");
+			System.out.printf(" %s\t\t%s%n", "-h",  "Print help");
+			System.out.println();
 		}
 		if(module == MODULE_EXTRACT) {
 			System.out.println(ANSIHandler.wrapper("\n EzAAI - extract", 'G'));
 			System.out.println(ANSIHandler.wrapper(" Extract protein DB from prokaryotic genome sequence using Prodigal", 'g'));
-			System.out.println("");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB> [-l <LABEL> -t <THREAD>]");
-			System.out.println("");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-i", "Input prokaryotic genome sequence"));
-			System.out.println(String.format(" %s\t\t%s", "-o", "Output protein database"));
+			System.out.printf(" %s\t\t%s%n", "-i", "Input prokaryotic genome sequence");
+			System.out.printf(" %s\t\t%s%n", "-o", "Output protein database");
 			
-			System.out.println("");
+			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-l", "Taxonomic label for phylogenetic tree"));
-			System.out.println(String.format(" %s\t\t%s", "-t", "Number of CPU threads - multi-threading requires ufasta (default: 1)"));
+			System.out.printf(" %s\t\t%s%n", "-l", "Taxonomic label for phylogenetic tree");
+			System.out.printf(" %s\t\t%s%n", "-t", "Number of CPU threads - multi-threading requires ufasta (default: 1)");
 			//System.out.println(String.format(" %s\t\t%s", "  ", "https://github.com/gmarcais/ufasta"));
-			System.out.println(String.format(" %s\t%s", "-prodigal", "Custom path to prodigal binary (default: prodigal)"));
-			System.out.println(String.format(" %s\t%s", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)"));
-			System.out.println(String.format(" %s\t%s", "-ufasta", "Custom path to ufasta binary (default: ufasta)"));
-			System.out.println("");
+			System.out.printf(" %s\t%s%n", "-prodigal", "Custom path to prodigal binary (default: prodigal)");
+			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
+			System.out.printf(" %s\t%s%n", "-ufasta", "Custom path to ufasta binary (default: ufasta)");
+			System.out.println();
 		}
 		if(module == MODULE_CONVERT) {
 			System.out.println(ANSIHandler.wrapper("\n EzAAI - convert", 'G'));
 			System.out.println(ANSIHandler.wrapper(" Convert CDS FASTA file into protein DB", 'g'));
-			System.out.println("");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB> [-l <LABEL>]");
-			System.out.println("");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-i", "Input CDS file (FASTA format)"));
-			System.out.println(String.format(" %s\t\t%s", "-s", "Sequence type of input file (nucl/prot)"));
-			System.out.println(String.format(" %s\t\t%s", "-o", "Output protein DB"));
-			System.out.println("");
+			System.out.printf(" %s\t\t%s%n", "-i", "Input CDS file (FASTA format)");
+			System.out.printf(" %s\t\t%s%n", "-s", "Sequence type of input file (nucl/prot)");
+			System.out.printf(" %s\t\t%s%n", "-o", "Output protein DB");
+			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-l", "Taxonomic label for phylogenetic tree"));
-			System.out.println(String.format(" %s\t%s", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)"));
-			System.out.println("");
+			System.out.printf(" %s\t\t%s%n", "-l", "Taxonomic label for phylogenetic tree");
+			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
+			System.out.println();
 		}
 		if(module == MODULE_CALCULATE) {
 			System.out.println(ANSIHandler.wrapper("\n EzAAI - calculate", 'G'));
 			System.out.println(ANSIHandler.wrapper(" Calculate AAI value from protein databases", 'g'));
-			System.out.println("");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT> [-p <PROGRAM> -t <THREAD> -id <IDENTITY> -cov <COVERAGE> -mtx <MTX_OUTPUT>]");
-			System.out.println("");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-i", "First input protein DB / directory with protein DBs"));
-			System.out.println(String.format(" %s\t\t%s", "-j", "Second input protein DB / directory with protein DBs"));
-			System.out.println(String.format(" %s\t\t%s", "-o",  "Output result file"));
-			System.out.println("");
+			System.out.printf(" %s\t\t%s%n", "-i", "First input protein DB / directory with protein DBs");
+			System.out.printf(" %s\t\t%s%n", "-j", "Second input protein DB / directory with protein DBs");
+			System.out.printf(" %s\t\t%s%n", "-o",  "Output result file");
+			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-p", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)"));
-			System.out.println(String.format(" %s\t\t%s", "-t", "Number of CPU threads to use (default: 10)"));
-			System.out.println(String.format(" %s\t\t%s", "-id", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)"));
-			System.out.println(String.format(" %s\t\t%s", "-cov", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)"));
-			System.out.println(String.format(" %s\t\t%s", "-mtx", "Matrix Market formatted output"));
-			System.out.println(String.format(" %s\t%s", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)"));
-			System.out.println(String.format(" %s\t%s", "-diamond", "Custom path to DIAMOND binary (default: diamond)"));
-			System.out.println(String.format(" %s\t%s", "-blastp", "Custom path to BLASTp+ binary (default: blastp)"));
-			System.out.println(String.format(" %s\t%s", "-makeblastdb", "Custom path to makeblastdb binary (default: makeblastdb)"));
-			System.out.println("");
+			System.out.printf(" %s\t\t%s%n", "-p", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)");
+			System.out.printf(" %s\t\t%s%n", "-t", "Number of CPU threads to use (default: 10)");
+			System.out.printf(" %s\t\t%s%n", "-id", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)");
+			System.out.printf(" %s\t\t%s%n", "-cov", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)");
+			System.out.printf(" %s\t\t%s%n", "-mtx", "Matrix Market formatted output");
+			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
+			System.out.printf(" %s\t%s%n", "-diamond", "Custom path to DIAMOND binary (default: diamond)");
+			System.out.printf(" %s\t%s%n", "-blastp", "Custom path to BLASTp+ binary (default: blastp)");
+			System.out.printf(" %s\t%s%n", "-makeblastdb", "Custom path to makeblastdb binary (default: makeblastdb)");
+			System.out.println();
 		}
 		if(module == MODULE_CLUSTER) {
 			System.out.println(ANSIHandler.wrapper("\n EzAAI - cluster", 'G'));
 			System.out.println(ANSIHandler.wrapper(" Hierarchical clustering of taxa with AAI values", 'g'));
-			System.out.println("");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar cluster -i <AAI_TABLE> -o <OUTPUT>");
-			System.out.println("");
+			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.println(String.format(" %s\t\t%s", "-i", "Input EzAAI result file containing all-by-all pairwise AAI values"));
-			System.out.println(String.format(" %s\t\t%s", "-o",  "Output result file"));
-			System.out.println("");
+			System.out.printf(" %s\t\t%s%n", "-i", "Input EzAAI result file containing all-by-all pairwise AAI values");
+			System.out.printf(" %s\t\t%s%n", "-o",  "Output result file");
+			System.out.println();
 		}
 	}
 }

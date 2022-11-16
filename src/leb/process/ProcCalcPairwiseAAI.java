@@ -53,14 +53,14 @@ public class ProcCalcPairwiseAAI {
 	
 	// returns [cds1, cds2, hit1, hit2, recHit, avglen, aai]
 	public List<String> calculateProteomePairWithDetails(String faa1, String faa2) throws IOException {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		// Switch mode
 		switch(mode){
-			case MODE_BLASTP: return pairwiseBlastp(faa1, faa2, true);
+			case MODE_BLASTP: return pairwiseBlastp(faa1, faa2);
 //			case MODE_USEARCH: break;
-			case MODE_MMSEQS: return pairwiseMmseqs(faa1, faa2, true);
-			case MODE_DIAMOND: return pairwiseDiamond(faa1, faa2, false, true);
-			case MODE_DSENS: return pairwiseDiamond(faa1, faa2, true, true);
+			case MODE_MMSEQS: return pairwiseMmseqs(faa1, faa2);
+			case MODE_DIAMOND: return pairwiseDiamond(faa1, faa2, false);
+			case MODE_DSENS: return pairwiseDiamond(faa1, faa2, true);
 			default: break;
 		}
 		return res;
@@ -94,7 +94,7 @@ public class ProcCalcPairwiseAAI {
 	}
 	
 	// calculate AAI from two-way hits
-	private double calcIdentity(
+/*	private double calcIdentity(
 			List<Blast6FormatHitDomain> hits_vice,
 			List<Blast6FormatHitDomain> hits_versa,
 			Map<String, Integer> lengthMap,
@@ -131,9 +131,9 @@ public class ProcCalcPairwiseAAI {
 					nval++;
 					isum += viceMatrix[i][j] + versaMatrix[i][j];
 				}
-				/* else if(viceMatrix[i][j] >= 40.0 || versaMatrix[i][j] >= 40.0) {
-					Prompt.debug(String.format("Non-reciprocal hit : %.3f / %.3f", viceMatrix[i][j], versaMatrix[i][j]));
-				} */
+			//	else if(viceMatrix[i][j] >= 40.0 || versaMatrix[i][j] >= 40.0) {
+			//		Prompt.debug(String.format("Non-reciprocal hit : %.3f / %.3f", viceMatrix[i][j], versaMatrix[i][j]));
+			//	}
 			}
 		}
 		
@@ -143,7 +143,7 @@ public class ProcCalcPairwiseAAI {
 		}
 		Prompt.talk(String.format("%d reciprocal hits found. Estimated AAI : %.3f", nval, isum / (nval * 2)));
 		return isum / (nval * 2);
-	}
+	} */
 	
 	// returns [cds1, cds2, hit1, hit2, recHit, avglen, aai]
 	private List<String> calcIdentityWithDetails(
@@ -152,7 +152,7 @@ public class ProcCalcPairwiseAAI {
 			Map<String, Integer> lengthMap,
 			Map<String, Integer> nameMap1,
 			Map<String, Integer> nameMap2) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		int fac = (mode == MODE_MMSEQS ? 100 : 1);
 		int n1 = nameMap1.size(), n2 = nameMap2.size();
 		res.add(String.valueOf(n2));
@@ -214,13 +214,13 @@ public class ProcCalcPairwiseAAI {
 		return res;
 	}
 	
-	private List<String> pairwiseBlastp(String faa1, String faa2, boolean benchmark) throws IOException {
+	private List<String> pairwiseBlastp(String faa1, String faa2) throws IOException {
 		// Read sequence lengths
 		BufferedReader 	br1 = new BufferedReader(new FileReader(faa1)),
 						br2 = new BufferedReader(new FileReader(faa2));
-		Map<String, Integer> lengthMap = new HashMap<String, Integer>();
-		Map<String, Integer> nameMap1  = new HashMap<String, Integer>(),
-							 nameMap2  = new HashMap<String, Integer>();
+		Map<String, Integer> lengthMap = new HashMap<>();
+		Map<String, Integer> nameMap1  = new HashMap<>(),
+							 nameMap2  = new HashMap<>();
 		
 		mapLength(br1, br2, lengthMap, nameMap1, nameMap2);
 		br1.close(); br2.close();
@@ -257,14 +257,7 @@ public class ProcCalcPairwiseAAI {
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
-		if(benchmark) {
-			return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap1, nameMap2);
-		}
-		else {
-			List<String> res = new ArrayList<String>();
-			res.add(String.valueOf(calcIdentity(hits_vice, hits_versa, lengthMap, nameMap1, nameMap2)));
-			return res;
-		}
+		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap1, nameMap2);
 	}
 /*	
 	private double pairwiseUsearch(String faa1, String faa2) throws IOException {
@@ -313,13 +306,13 @@ public class ProcCalcPairwiseAAI {
 		return calcIdentity(hits_vice, hits_versa, lengthMap, nameMap1, nameMap2);
 	}
 */	
-	private List<String> pairwiseMmseqs(String faa1, String faa2, boolean benchmark) throws IOException {
+	private List<String> pairwiseMmseqs(String faa1, String faa2) throws IOException {
 		// Read sequence lengths
 		BufferedReader 	br1 = new BufferedReader(new FileReader(faa1)),
 						br2 = new BufferedReader(new FileReader(faa2));
-		Map<String, Integer> lengthMap = new HashMap<String, Integer>();
-		Map<String, Integer> nameMap1  = new HashMap<String, Integer>(),
-							 nameMap2  = new HashMap<String, Integer>();
+		Map<String, Integer> lengthMap = new HashMap<>();
+		Map<String, Integer> nameMap1  = new HashMap<>(),
+							 nameMap2  = new HashMap<>();
 				
 		mapLength(br1, br2, lengthMap, nameMap1, nameMap2);
 		br1.close(); br2.close();
@@ -382,23 +375,16 @@ public class ProcCalcPairwiseAAI {
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
-		if(benchmark) {
-			return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1);
-		}
-		else{
-			List<String> res = new ArrayList<String>();
-			res.add(String.valueOf(calcIdentity(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1)));
-			return res;
-		}
+		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1);
 	}
 	
-	private List<String> pairwiseDiamond(String faa1, String faa2, boolean sensitive, boolean benchmark) throws IOException {
+	private List<String> pairwiseDiamond(String faa1, String faa2, boolean sensitive) throws IOException {
 		// Read sequence lengths
 		BufferedReader 	br1 = new BufferedReader(new FileReader(faa1)),
 						br2 = new BufferedReader(new FileReader(faa2));
-		Map<String, Integer> lengthMap = new HashMap<String, Integer>();
-		Map<String, Integer> nameMap1  = new HashMap<String, Integer>(),
-							 nameMap2  = new HashMap<String, Integer>();
+		Map<String, Integer> lengthMap = new HashMap<>();
+		Map<String, Integer> nameMap1  = new HashMap<>(),
+							 nameMap2  = new HashMap<>();
 				
 		mapLength(br1, br2, lengthMap, nameMap1, nameMap2);
 		br1.close(); br2.close();
@@ -437,13 +423,6 @@ public class ProcCalcPairwiseAAI {
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
-		if(benchmark) {
-			return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1);
-		}
-		else{
-			List<String> res = new ArrayList<String>();
-			res.add(String.valueOf(calcIdentity(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1)));
-			return res;
-		}
+		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1);
 	}
 }

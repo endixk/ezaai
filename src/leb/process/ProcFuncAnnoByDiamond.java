@@ -17,15 +17,8 @@ public class ProcFuncAnnoByDiamond {
 	
 	private String diamondPath = "diamond";
 	
-	public static final int BLASTX = 0;
-	public static final int BLASTP = 1;
-	
-	private int method = 0;
-	
-	private int noHits = 1;
-	private double evalue = 1e-5;
-	private double score = 0;
-	
+	private final int method;
+
 	private double identity = 0;
 	private double qcov = 0;
 	
@@ -34,76 +27,30 @@ public class ProcFuncAnnoByDiamond {
 	public ProcFuncAnnoByDiamond(int method){
 		this.method = method;
 	}
-	
-	public String getOutDir() {
-		return outDir;
-	}
 
 	public void setOutDir(String outDir) {
 		this.outDir = outDir;
-	}
-
-	public String getDiamondPath() {
-		return diamondPath;
 	}
 
 	public void setDiamondPath(String diamondPath) {
 		this.diamondPath = diamondPath;
 	}
 
-	public int getNoHits() {
-		return noHits;
-	}
-
-	public void setNoHits(int noHits) {
-		this.noHits = noHits;
-	}
-
-	public double getEvalue() {
-		return evalue;
-	}
-
-	public void setEvalue(double evalue) {
-		this.evalue = evalue;
-	}
-
-	public double getScore() {
-		return score;
-	}
-
-	public void setScore(double score) {
-		this.score = score;
-	}
-
-	public double getIdentity() {
-		return identity;
-	}
-
 	public void setIdentity(double identity) {
 		this.identity = identity;
 	}
-	
-	public double getQcov() {
-		return qcov;
-	}
-	
+
 	public void setQcov(double qcov) {
 		this.qcov = qcov;
-	}
-
-	public boolean isSensitive() {
-		return sensitive;
 	}
 
 	public void setSensitive(boolean sensitive) {
 		this.sensitive = sensitive;
 	}
 	
-	public void executeMakeDB(String inFileName, String dbFileName, int threads) throws IOException{
+	public void executeMakeDB(String inFileName, String dbFileName, int threads) {
 		File dir = new File(outDir);
-		if(dir.exists() == false){
-			dir.mkdir();
-		}
+		if(!dir.exists()) dir.mkdir();
 
 		DiamondWrapper diamond = new DiamondWrapper(diamondPath, DiamondWrapper.MAKEDB);
 		diamond.setThreads(threads);
@@ -116,50 +63,37 @@ public class ProcFuncAnnoByDiamond {
 	public List<Blast6FormatHitDomain> execute(String queryFileName, String dbFileName, int threads) throws IOException{
 		
 		File dir = new File(outDir);
-		if(dir.exists() == false){
-			dir.mkdir();
-		}
+		if(!dir.exists()) dir.mkdir();
 		DiamondWrapper diamond = new DiamondWrapper(diamondPath, method);//blastx option
 		
 		diamond.setDbFile(dbFileName);
 		diamond.setQueryFileName(queryFileName);
-		
+
+		int noHits = 1;
 		diamond.setNoHits(noHits);
 	
 		diamond.setIdentity(identity); 
 		diamond.setQueryCover(qcov);
+		diamond.setEvalue(1e-5);
 		
-		
-		if(score !=  0){
-			diamond.setScore(score);
-		}else{
-			diamond.setEvalue(evalue);
-		}
-		
-		if(sensitive == true){
-			diamond.setSensitive();
-		}
+		if(sensitive) diamond.setSensitive();
 		
 		diamond.setThreads(threads);
 		
 		String outFileName = outDir + File.separator + "DiamondAnno.txt";
 		diamond.setOutFileName(outFileName);
 		diamond.run();
-		
-		List<Blast6FormatHitDomain> diamondList = parseOutFile(outFileName);
-		
-		//f.deleteOnExit();
-		
-		return diamondList;
+
+		return parseOutFile(outFileName);
 	}//method end
 	
 	public List<Blast6FormatHitDomain> parseOutFile(String outFileName) throws IOException{
 		
-		BufferedReader br = new BufferedReader(new FileReader(new File(outFileName)));
+		BufferedReader br = new BufferedReader(new FileReader(outFileName));
 		
-		List<Blast6FormatHitDomain> diamondList = new ArrayList<Blast6FormatHitDomain>();
+		List<Blast6FormatHitDomain> diamondList = new ArrayList<>();
 		
-		String line = null;
+		String line;
 		while((line = br.readLine()) != null){
 			
 			String[] sline = line.split("\t");
@@ -170,16 +104,16 @@ public class ProcFuncAnnoByDiamond {
 			diamond.setTarget(sline[1]);//  EXAMPLE: hsa:00001|K00001|K00002 
 			
 			diamond.setIdentity(Double.parseDouble(sline[2]));
-			diamond.setAlignmentLength(Integer.valueOf(sline[3]));
+			diamond.setAlignmentLength(Integer.parseInt(sline[3]));
 			
-			diamond.setMismatch(Integer.valueOf(sline[4]));
-			diamond.setGap(Integer.valueOf(sline[5]));
+			diamond.setMismatch(Integer.parseInt(sline[4]));
+			diamond.setGap(Integer.parseInt(sline[5]));
 			
-			diamond.setStartInQuery(Integer.valueOf(sline[6]));
-			diamond.setEndInQuery(Integer.valueOf(sline[7]));
+			diamond.setStartInQuery(Integer.parseInt(sline[6]));
+			diamond.setEndInQuery(Integer.parseInt(sline[7]));
 	
-			diamond.setStartInTarget(Integer.valueOf(sline[8]));
-			diamond.setEndInTarget(Integer.valueOf(sline[9]));
+			diamond.setStartInTarget(Integer.parseInt(sline[8]));
+			diamond.setEndInTarget(Integer.parseInt(sline[9]));
 			
 			diamond.setEvalue(Double.parseDouble(sline[10]));
 			diamond.setBitScore(Double.parseDouble(sline[11]));
