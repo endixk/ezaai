@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Kim"
+  given-names: "Dongwook"
+  orcid: "https://orcid.org/0000-0001-7386-3163"
+- family-names: "Park"
+  given-names: "Sein"
+- family-names: "Chun"
+  given-names: "Jongsik"
+  orcid: "https://orcid.org/0000-0003-3385-5171"
+title: "EzAAI - High Throughput Prokaryotic AAI Calculator"
+version: 1.2.2
+doi: 10.1007/s12275-021-1154-0
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Kim"
+    given-names: "Dongwook"
+    orcid: "https://orcid.org/0000-0001-7386-3163"
+  - family-names: "Park"
+    given-names: "Sein"
+  - family-names: "Chun"
+    given-names: "Jongsik"
+    orcid: "https://orcid.org/0000-0003-3385-5171"
+  doi: 10.1007/s12275-021-1154-0
+  journal: "Journal of Microbiology"
+  title: "Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity"
+  issue: 59
+  volume: 5
+  start: 476
+  end: 480
+  year: 2021

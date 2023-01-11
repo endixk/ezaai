@@ -1,4 +1,7 @@
 # EzAAI: High Throughput Prokaryotic AAI Calculator 
+[![Build](https://img.shields.io/github/actions/workflow/status/endixk/ezaai/maven-build.yml)](https://github.com/endixk/ezaai/actions)
+[![License](https://img.shields.io/github/license/endixk/ezaai)](https://github.com/endixk/ezaai/blob/main/LICENSE.md)
+[![Bioconda](https://img.shields.io/conda/dn/bioconda/ezaai?logo=anaconda)](https://anaconda.org/bioconda/ezaai) 
 
 EzAAI is a suite of workflows for improved AAI calculation performance along with the novel module that provides hierarchical clustering analysis and dendrogram representation.
 
@@ -9,8 +12,7 @@ EzAAI is a suite of workflows for improved AAI calculation performance along wit
 ## Quick start with conda
 
 ~~~bash
-conda create -n ezaai -c bioconda ezaai
-conda activate ezaai
+conda install -c bioconda -y ezaai
 EzAAI -h
 ~~~
 
@@ -33,7 +35,7 @@ EzAAI extract -i <IN_SEQ> -o <OUT_DB>
  * Calculate AAI value from protein databases using MMseqs2
 
 ~~~bash
-EzAAI calculate -i <INPUT_1> -j <INPUT_2> -o \<OUTPUT>
+EzAAI calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT>
 ~~~
 
 |Argument|Description|
