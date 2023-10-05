@@ -75,6 +75,7 @@ public class EzAAI {
 	String label = null; // convert, extract
 	String input2 = null, mtxout = null; int thread = 10; double identity = 0.4, coverage = 0.5; // calculate
 	int program = PROGRAM_MMSEQS; // calculate
+	boolean useid = false; // cluster
 	
 	private int parseArguments(String[] args) {
 		String modstr = "";
@@ -170,6 +171,9 @@ public class EzAAI {
 			if(arg.get("-cov") != null) coverage = Double.parseDouble(arg.get("-cov"));
 			if(arg.get("-mtx") != null) mtxout = arg.get("-mtx");
 			if(arg.get("-t") != null) thread = Integer.parseInt(arg.get("-t"));
+		}
+		if(module == MODULE_CLUSTER) {
+			if(arg.get("-u") != null) useid = true;
 		}
 		
 		if(arg.get("-prodigal") != null) path_prodigal = arg.get("-prodigal");
@@ -486,6 +490,7 @@ public class EzAAI {
 		
 		// parse input file
 		Map<Integer, Integer> imap = new HashMap<>();
+		List<Integer> ids = new ArrayList<>();
 		List<String> labels = new ArrayList<>();
 		List<String> bufs = new ArrayList<>();
 		try {
@@ -498,10 +503,12 @@ public class EzAAI {
 				String lab1 = buf.split("\t")[2], lab2 = buf.split("\t")[3];
 				if(!imap.containsKey(id1)) {
 					imap.put(id1, labels.size());
+					ids.add(id1);
 					labels.add(lab1);
 				}
 				if(!imap.containsKey(id2)) {
 					imap.put(id2, labels.size());
+					ids.add(id2);
 					labels.add(lab2);
 				}
 			}
@@ -551,7 +558,7 @@ public class EzAAI {
 			Prompt.print("AAI matrix identified. Running hierarchical clustering with UPGMA method...");
 			
 			// produce UPGMA tree
-			ProcUPGMA upgma = new ProcUPGMA(dmat, labels);
+			ProcUPGMA upgma = new ProcUPGMA(dmat, ids, labels, useid);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(output));
 			bw.write(upgma.getTree() + "\n");
 			bw.close();
@@ -741,6 +748,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.printf(" %s\t\t%s%n", "-i", "Input EzAAI result file containing all-by-all pairwise AAI values");
 			System.out.printf(" %s\t\t%s%n", "-o",  "Output result file");
+			System.out.printf(" %s\t\t%s%n", "-u",  "Use ID instead of label for tree");
 			System.out.println();
 		}
 	}

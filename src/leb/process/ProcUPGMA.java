@@ -11,9 +11,15 @@ public class ProcUPGMA {
 	private final List<Integer> counts = new LinkedList<>();
 	private int N;
 	
-	public ProcUPGMA(double[][] dmat, List<String> labels) {
+	public ProcUPGMA(double[][] dmat, List<Integer> ids, List<String> labels, boolean useid) {
 		this.dmat = dmat;
-		this.leaves.addAll(labels);
+		if(useid) {
+			for(int id : ids) {
+				this.leaves.add(String.format("%d", id));
+			}
+		} else {
+			this.leaves.addAll(labels);
+		}
 		
 		N = labels.size();
 		for(int i = 0; i < N; i++) {
