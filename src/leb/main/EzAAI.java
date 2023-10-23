@@ -36,11 +36,13 @@ public class EzAAI {
 							   			+ " Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity.\n"
 							   			+ " J Microbiol. 59, 476–480 (2021).\n"
 							   			+ " DOI: 10.1007/s12275-021-1154-0";
+	public static final boolean STABLE  = false;
 	
 	final static int MODULE_CONVERT 	= 1,
 					 MODULE_EXTRACT 	= 2,
 					 MODULE_CALCULATE 	= 3,
 					 MODULE_CLUSTER		= 4,
+					 MODULE_CONVERTDB	= 5,
 					 MODULE_INVALID 	= 0;
 	
 	final static int PROGRAM_MMSEQS		= 1,
@@ -56,6 +58,7 @@ public class EzAAI {
 		if(module.equals("extract")) 	this.module = MODULE_EXTRACT;
 		if(module.equals("calculate")) 	this.module = MODULE_CALCULATE;
 		if(module.equals("cluster"))	this.module = MODULE_CLUSTER;
+		if(module.equals("convertdb"))	this.module = MODULE_CONVERTDB;
 	}
 	
 	// Argument variables
@@ -84,6 +87,7 @@ public class EzAAI {
 		case MODULE_EXTRACT: modstr = "extract"; break;
 		case MODULE_CALCULATE: modstr = "calculate"; break;
 		case MODULE_CLUSTER: modstr = "cluster"; break;
+		case MODULE_CONVERTDB: modstr = "convertdb"; break;
 		}
 		
 		Arguments arg = new Arguments(args);
@@ -176,7 +180,7 @@ public class EzAAI {
 		if(module == MODULE_CLUSTER) {
 			if(arg.get("-u") != null) useid = true;
 		}
-		
+
 		if(arg.get("-prodigal") != null) path_prodigal = arg.get("-prodigal");
 		if(arg.get("-mmseqs") != null) path_mmseqs = arg.get("-mmseqs");
 		if(arg.get("-diamond") != null) path_diamond = arg.get("-diamond");
@@ -216,7 +220,7 @@ public class EzAAI {
 		Prompt.talk("Checking dependencies...");
 		
 		switch(module) {
-		case MODULE_CONVERT:
+		case MODULE_CONVERT: case MODULE_CONVERTDB:
 			if(checkProgram(PROGRAM_MMSEQS)) return PROGRAM_MMSEQS;
 			break;
 		case MODULE_EXTRACT:
@@ -581,6 +585,14 @@ public class EzAAI {
 		Prompt.print("Task finished.");
 		return 0;
 	}
+
+	private int runConvertDB() {
+		int ret;
+		if((ret = dbToFaa(input1, output)) == 0) {
+			Prompt.print("Task finished.");
+		}
+		return ret;
+	}
 	
 	private int run(String[] args) {
 		if(parseArguments(args) < 0) return -1;
@@ -607,6 +619,7 @@ public class EzAAI {
 		case MODULE_EXTRACT: 	return runExtract();
 		case MODULE_CALCULATE: 	return runCalculate();
 		case MODULE_CLUSTER:	return runCluster();
+		case MODULE_CONVERTDB: 	return runConvertDB();
 		default: return -1;
 		}
 	}
@@ -639,6 +652,7 @@ public class EzAAI {
 		GenericConfig.setHeaderLength(7);
 		GenericConfig.setHeader("EzAAI");
 		Prompt.print(String.format("EzAAI - %s [%s]", VERSION, RELEASE));
+		if(!STABLE) Prompt.warning("This is an unstable version. Please use with caution and report any bugs to the developer.");
 		if(ezAAI.run(args) < 0) {
 			Prompt.error("Program terminated with error.");
 		}
@@ -660,6 +674,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Module\t\tDescription", 'c'));
 			System.out.printf(" %s\t%s%n", "extract",   "Extract protein DB from genome using Prodigal");
 			System.out.printf(" %s\t%s%n", "convert",   "Convert CDS FASTA file into protein DB");
+			System.out.printf(" %s\t%s%n", "convertdb", "Convert protein DB into FASTA file");
 			System.out.printf(" %s\t%s%n", "calculate", "Calculate AAI value from protein databases using MMSeqs2");
 			System.out.printf(" %s\t%s%n", "cluster",   "Hierarchical clustering of taxa with AAI values");
 			System.out.println();
@@ -760,6 +775,25 @@ public class EzAAI {
 			System.out.printf(" %s\t\t%s%n", "-i", "Input EzAAI result file containing all-by-all pairwise AAI values");
 			System.out.printf(" %s\t\t%s%n", "-o",  "Output result file");
 			System.out.printf(" %s\t\t%s%n", "-u",  "Use ID instead of label for tree");
+			System.out.println();
+		}
+		if(module == MODULE_CONVERTDB) {
+			System.out.println(ANSIHandler.wrapper("\n EzAAI - convertdb", 'G'));
+			System.out.println(ANSIHandler.wrapper(" Convert protein DB into FASTA file", 'g'));
+			System.out.println();
+
+			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar convertdb -i <IN_DB> -o <OUT_FA>");
+			System.out.println();
+
+			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
+			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
+			System.out.printf(" %s\t\t%s%n", "-i", "Input protein DB");
+			System.out.printf(" %s\t\t%s%n", "-o", "Output FASTA file");
+			System.out.println();
+
+			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
+			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
+			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
 			System.out.println();
 		}
 	}
