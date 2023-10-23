@@ -73,7 +73,7 @@ public class EzAAI {
 			path_ufasta   = "ufasta";
 	
 	String label = null; // convert, extract
-	String input2 = null, mtxout = null; int thread = 10; double identity = 0.4, coverage = 0.5; // calculate
+	String input2 = null, matchout = null, mtxout = null; int thread = 10; double identity = 0.4, coverage = 0.5; // calculate
 	int program = PROGRAM_MMSEQS; // calculate
 	boolean useid = false; // cluster
 	
@@ -169,6 +169,7 @@ public class EzAAI {
 			}
 			if(arg.get("-id") != null) identity = Double.parseDouble(arg.get("-id"));
 			if(arg.get("-cov") != null) coverage = Double.parseDouble(arg.get("-cov"));
+			if(arg.get("-match") != null) matchout = arg.get("-match");
 			if(arg.get("-mtx") != null) mtxout = arg.get("-mtx");
 			if(arg.get("-t") != null) thread = Integer.parseInt(arg.get("-t"));
 		}
@@ -412,7 +413,14 @@ public class EzAAI {
 				br.close();
 				(new File("mm.label")).delete();
 			}
-			
+
+			// prepare match output
+			BufferedWriter maw = null;
+			if(matchout != null) {
+				maw = new BufferedWriter(new FileWriter(matchout));
+				maw.write("ID 1\tID 2\tLabel 1\tLabel 2\tCDS 1\tCDS 2\tForward\tBackward\tAverage\n");
+			}
+
 			// run MMSeqs for each fasta pairs
 			Double[][] aaiTable = new Double[ilist.size()][jlist.size()];
 			Integer[][] hitTable = new Integer[ilist.size()][jlist.size()];
@@ -422,9 +430,9 @@ public class EzAAI {
 				for(int j = 0; j < jlist.size(); j++) {
 					Prompt.print(String.format("Calculating AAI... [Task %d/%d]", i*jlist.size()+j+1, ilist.size()*jlist.size()));
 					ProcCalcPairwiseAAI procAAI = new ProcCalcPairwiseAAI();
-					
+
 					switch(program) {
-					case PROGRAM_MMSEQS: 
+					case PROGRAM_MMSEQS:
 						procAAI.setPath(path_mmseqs);
 						procAAI.setMode(ProcCalcPairwiseAAI.MODE_MMSEQS);
 						break;
@@ -441,13 +449,15 @@ public class EzAAI {
 					procAAI.setNthread(thread);
 					procAAI.setIdentity(identity);
 					procAAI.setCoverage(coverage);
-					List<String> res = procAAI.calculateProteomePairWithDetails(ilist.get(i), jlist.get(j));
+					if (maw != null) procAAI.setMatchout(maw);
+					List<String> res = procAAI.calculateProteomePairWithDetails(ilabs.get(i), jlabs.get(j), ilist.get(i), jlist.get(j));
 					hitTable[i][j] = Integer.parseInt(res.get(4));
 					aaiTable[i][j] = Double.parseDouble(res.get(6));
 					if(j == 0) ilens[i] = Integer.parseInt(res.get(0));
 					if(i == 0) jlens[j] = Integer.parseInt(res.get(1));
 				}
 			}
+			if(maw != null) maw.close();
 			
 			// print result into output file
 			BufferedWriter bw = new BufferedWriter(new FileWriter(output, outExists));
@@ -484,7 +494,7 @@ public class EzAAI {
 		Prompt.print("Task finished.");
 		return 0;
 	}
-	
+
 	private int runCluster() {
 		Prompt.debug("EzAAI - cluster module");
 		
@@ -718,22 +728,23 @@ public class EzAAI {
 		
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t\t%s%n", "-i", "First input protein DB / directory with protein DBs");
-			System.out.printf(" %s\t\t%s%n", "-j", "Second input protein DB / directory with protein DBs");
-			System.out.printf(" %s\t\t%s%n", "-o",  "Output result file");
+			System.out.printf(" %s\t%s%n", "-i      ", "First input protein DB / directory with protein DBs");
+			System.out.printf(" %s\t%s%n", "-j      ", "Second input protein DB / directory with protein DBs");
+			System.out.printf(" %s\t%s%n", "-o      ",  "Output result file");
 			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t\t%s%n", "-p", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)");
-			System.out.printf(" %s\t\t%s%n", "-t", "Number of CPU threads to use (default: 10)");
-			System.out.printf(" %s\t\t%s%n", "-id", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)");
-			System.out.printf(" %s\t\t%s%n", "-cov", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)");
-			System.out.printf(" %s\t\t%s%n", "-mtx", "Matrix Market formatted output");
-			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
+			System.out.printf(" %s\t%s%n", "-p      ", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)");
+			System.out.printf(" %s\t%s%n", "-t      ", "Number of CPU threads to use (default: 10)");
+			System.out.printf(" %s\t%s%n", "-id     ", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)");
+			System.out.printf(" %s\t%s%n", "-cov    ", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)");
+			System.out.printf(" %s\t%s%n", "-match  ", "Path to write a result of matched CDS names");
+			System.out.printf(" %s\t%s%n", "-mtx    ", "Path to write a Matrix Market formatted output");
+			System.out.printf(" %s\t%s%n", "-mmseqs ", "Custom path to MMSeqs2 binary (default: mmseqs)");
 			System.out.printf(" %s\t%s%n", "-diamond", "Custom path to DIAMOND binary (default: diamond)");
-			System.out.printf(" %s\t%s%n", "-blastp", "Custom path to BLASTp+ binary (default: blastp)");
-			System.out.printf(" %s\t%s%n", "-makeblastdb", "Custom path to makeblastdb binary (default: makeblastdb)");
+			System.out.printf(" %s\t%s%n", "-blastp ", "Custom path to BLASTp+ binary (default: blastp)");
+			System.out.printf(" %s\t%s%n", "-blastdb", "Custom path to makeblastdb binary (default: makeblastdb)");
 			System.out.println();
 		}
 		if(module == MODULE_CLUSTER) {

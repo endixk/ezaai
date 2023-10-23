@@ -6,6 +6,7 @@
 package leb.process;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -38,21 +39,25 @@ public class ProcCalcPairwiseAAI {
 	private double identity = 40.0, coverage = 0.5;
 	private String path = null;
 	public void setPath(String path) {this.path = path;}
-	
 	private String dbpath = null; // makeblastdb
 	public void setDbpath(String dbpath) {this.dbpath = dbpath;}
-	
 	public void setIdentity(double identity) {
 		this.identity = identity * 100;
 	}
 	public void setCoverage(double coverage) {
 		this.coverage = coverage;
 	}
+	private BufferedWriter maw = null;
+	public void setMatchout(BufferedWriter maw) {
+		this.maw = maw;
+	}
+	private String label1 = null, label2 = null;
 	
 	public ProcCalcPairwiseAAI() {}
 	
 	// returns [cds1, cds2, hit1, hit2, recHit, avglen, aai]
-	public List<String> calculateProteomePairWithDetails(String faa1, String faa2) throws IOException {
+	public List<String> calculateProteomePairWithDetails(String label1, String label2, String faa1, String faa2) throws IOException {
+		this.label1 = label1; this.label2 = label2;
 		List<String> res = new ArrayList<>();
 		// Switch mode
 		switch(mode){
@@ -66,10 +71,9 @@ public class ProcCalcPairwiseAAI {
 		return res;
 	}
 	
-	private void mapLength(BufferedReader br1, BufferedReader br2, 
-			Map<String, Integer> lmap, 
-			Map<String, Integer> nmap1, 
-			Map<String, Integer> nmap2) throws IOException {
+	private void mapLength(BufferedReader br1, BufferedReader br2, Map<String, Integer> lmap,
+						   Map<String, Integer> nmap1, Map<String, Integer> nmap2,
+						   List<String> nlist1, List<String> nlist2) throws IOException {
 		int n1 = 0, n2 = 0;
 
 		String buf;
@@ -81,6 +85,7 @@ public class ProcCalcPairwiseAAI {
 
 			lmap.put(id, (ed - st - 2) / 3);
 			nmap1.put(id, n1++);
+			nlist1.add(id);
 		}
 		while((buf = br2.readLine()) != null){
 			if(!buf.startsWith(">")) continue;
@@ -90,6 +95,7 @@ public class ProcCalcPairwiseAAI {
 
 			lmap.put(id, (ed - st - 2) / 3);
 			nmap2.put(id, n2++);
+			nlist2.add(id);
 		}
 	}
 	
@@ -151,10 +157,13 @@ public class ProcCalcPairwiseAAI {
 			List<Blast6FormatHitDomain> hits_versa,
 			Map<String, Integer> lengthMap,
 			Map<String, Integer> nameMap1,
-			Map<String, Integer> nameMap2) {
+			Map<String, Integer> nameMap2,
+			List<String> nameList1,
+			List<String> nameList2) {
 		List<String> res = new ArrayList<>();
 		int fac = (mode == MODE_MMSEQS ? 100 : 1);
 		int n1 = nameMap1.size(), n2 = nameMap2.size();
+		Prompt.debug(String.format("n1 = %d, n2 = %d, l1 = %d, l2= %d", n1, n2, nameList1.size(), nameList2.size()));
 		res.add(String.valueOf(n2));
 		res.add(String.valueOf(n1));
 
@@ -192,6 +201,17 @@ public class ProcCalcPairwiseAAI {
 					nval++;
 					isum += viceMatrix[i][j] + versaMatrix[i][j];
 					lsum += viceLength[i][j] + versaLength[i][j];
+					if(maw != null) {
+						try {
+							maw.write(String.format("%d\t%d\t%s\t%s\t%s\t%s\t%.3f\t%.3f\t%.3f\n",
+									Math.abs(label1.hashCode()) % (1<<30), Math.abs(label2.hashCode()) % (1<<30),
+									label1, label2, nameList1.get(j), nameList2.get(i),
+									viceMatrix[i][j], versaMatrix[i][j], (viceMatrix[i][j] + versaMatrix[i][j]) / 2));
+						} catch(IOException e) {
+							Prompt.error("FATAL ERROR : Failed to write match output.");
+							return null;
+						}
+					}
 				}
 				/* else if(viceMatrix[i][j] >= 40.0 || versaMatrix[i][j] >= 40.0) {
 					Prompt.debug(String.format("Non-reciprocal hit : %.3f / %.3f", viceMatrix[i][j], versaMatrix[i][j]));
@@ -221,8 +241,10 @@ public class ProcCalcPairwiseAAI {
 		Map<String, Integer> lengthMap = new HashMap<>();
 		Map<String, Integer> nameMap1  = new HashMap<>(),
 							 nameMap2  = new HashMap<>();
+		List<String> nameList1 = new ArrayList<>(),
+					 nameList2 = new ArrayList<>();
 		
-		mapLength(br1, br2, lengthMap, nameMap1, nameMap2);
+		mapLength(br1, br2, lengthMap, nameMap1, nameMap2, nameList1, nameList2);
 		br1.close(); br2.close();
 
 		// Run pairwise BLASTp
@@ -257,7 +279,7 @@ public class ProcCalcPairwiseAAI {
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
-		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap1, nameMap2);
+		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap1, nameMap2, nameList1, nameList2);
 	}
 /*	
 	private double pairwiseUsearch(String faa1, String faa2) throws IOException {
@@ -313,8 +335,10 @@ public class ProcCalcPairwiseAAI {
 		Map<String, Integer> lengthMap = new HashMap<>();
 		Map<String, Integer> nameMap1  = new HashMap<>(),
 							 nameMap2  = new HashMap<>();
+		List<String> nameList1 = new ArrayList<>(),
+					 nameList2 = new ArrayList<>();
 				
-		mapLength(br1, br2, lengthMap, nameMap1, nameMap2);
+		mapLength(br1, br2, lengthMap, nameMap1, nameMap2, nameList1, nameList2);
 		br1.close(); br2.close();
 		
 		// Run MMSeqs2 reciprocal best hit search
@@ -375,7 +399,7 @@ public class ProcCalcPairwiseAAI {
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
-		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1);
+		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1, nameList1, nameList2);
 	}
 	
 	private List<String> pairwiseDiamond(String faa1, String faa2, boolean sensitive) throws IOException {
@@ -385,8 +409,10 @@ public class ProcCalcPairwiseAAI {
 		Map<String, Integer> lengthMap = new HashMap<>();
 		Map<String, Integer> nameMap1  = new HashMap<>(),
 							 nameMap2  = new HashMap<>();
+		List<String> nameList1 = new ArrayList<>(),
+					 nameList2 = new ArrayList<>();
 				
-		mapLength(br1, br2, lengthMap, nameMap1, nameMap2);
+		mapLength(br1, br2, lengthMap, nameMap1, nameMap2, nameList1, nameList2);
 		br1.close(); br2.close();
 		
 		// Run MMSeqs2 reciprocal best hit search
@@ -423,6 +449,6 @@ public class ProcCalcPairwiseAAI {
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
-		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1);
+		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap2, nameMap1, nameList1, nameList2);
 	}
 }
