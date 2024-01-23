@@ -197,7 +197,7 @@ public class ProcCalcPairwiseAAI {
 		int nval = 0; double isum = .0; int lsum = 0;
 		for(int i = 0; i < n1; i++){
 			for(int j = 0; j < n2; j++){
-				if(viceMatrix[i][j] >= 40.0 && versaMatrix[i][j] >= 40.0){
+				if(viceMatrix[i][j] >= identity && versaMatrix[i][j] >= identity){
 					nval++;
 					isum += viceMatrix[i][j] + versaMatrix[i][j];
 					lsum += viceLength[i][j] + versaLength[i][j];
