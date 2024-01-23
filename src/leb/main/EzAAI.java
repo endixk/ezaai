@@ -62,7 +62,7 @@ public class EzAAI {
 	}
 	
 	// Argument variables
-	String input1 = null, output = null; // universal
+	String input1 = null, output = null, tmp = "/tmp"; // universal
 	boolean outExists = false;
 	boolean seqNucl = true; // convert
 	boolean multithread = false; // extract
@@ -113,6 +113,23 @@ public class EzAAI {
 				outExists = true;
 				if(module == MODULE_CALCULATE) Prompt.warning("Output file exists. Results will be appended.");
 				else Prompt.warning("Output file exists. Results will be overwritten.");
+			}
+		}
+		if(arg.get("-tmp") != null) {
+			tmp = arg.get("-tmp");
+			if((new File(tmp)).exists()) {
+				if(!(new File(tmp)).isDirectory()) {
+					Prompt.error("Invalid temporary directory given: " + tmp);
+					return -1;
+				}
+				else Prompt.talk("Using existing temporary directory: " + tmp);
+			}
+			else {
+				if((new File(tmp)).mkdirs()) Prompt.talk("Created temporary directory: " + tmp);
+				else {
+					Prompt.error("Failed to create temporary directory: " + tmp);
+					return -1;
+				}
 			}
 		}
 		
@@ -249,7 +266,7 @@ public class EzAAI {
 		
 		Prompt.print("Converting given CDS file into protein database... ("+input1+" -> "+output+")");
 		String hex = Long.toHexString(new Random().nextLong());
-		String faaPath = "/tmp/" + hex + ".faa";
+		String faaPath = tmp + File.separator + hex + ".faa";
 		
 		try {
 			// copy input to temporary directory, translate if seq type is nucleotide
@@ -266,14 +283,18 @@ public class EzAAI {
 			bw.close();
 			
 			// create databases
-			Shell.exec("mkdir /tmp/" + hex);
+			String dir = tmp + File.separator + hex;
+			if(!(new File(dir)).mkdirs()) {
+				Prompt.error("Failed to create temporary directory: " + dir);
+				return -1;
+			}
 			ProcFuncAnnoByMMSeqs2 procMmseqs = new ProcFuncAnnoByMMSeqs2();
 			procMmseqs.setMmseqsPath(path_mmseqs);
-			procMmseqs.executeCreateDb(faaPath, "/tmp/" + hex + "/mm");
+			procMmseqs.executeCreateDb(faaPath, dir + File.separator + "mm");
 			
 			// create label info file
-			Prompt.debug("Writing file /tmp/" + hex + "/mm.label");
-			bw = new BufferedWriter(new FileWriter("/tmp/" + hex + "/mm.label"));
+			Prompt.debug("Writing file mm.label");
+			bw = new BufferedWriter(new FileWriter(dir + File.separator + "mm.label"));
 			bw.write(label + "\n");
 			bw.close();
 			
@@ -282,12 +303,12 @@ public class EzAAI {
 			// create .db file
 			StringBuilder buf = new StringBuilder("tar -c -z -f " + "mm.tar.gz");
 			for(String name : names) buf.append(" ").append(name);
-			Shell.exec(buf.toString(), new File("/tmp/" + hex));
-			Shell.exec("mv /tmp/" + hex + "/mm.tar.gz " + output);
+			Shell.exec(buf.toString(), new File(dir));
+			Shell.exec("mv " + dir + File.separator + "mm.tar.gz " + output);
 			
 			// remove temporary files
-			for(String name : names) (new File("/tmp/" + hex + "/" + name)).delete();
-			(new File("/tmp/" + hex)).delete();
+			for(String name : names) (new File(dir + File.separator + name)).delete();
+			(new File(dir)).delete();
 			
 			// tidy up
 			(new File(faaPath)).delete();
@@ -304,14 +325,14 @@ public class EzAAI {
 	
 	private int runExtract() {
 		Prompt.debug("EzAAI - extract module");
-		String  gffFile = "/tmp/" + GenericConfig.SESSION_UID + ".gff",
+		String  gffFile = tmp + File.separator + GenericConfig.SESSION_UID + ".gff",
 				faaFile = input1 + ".faa",
-				ffnFile = "/tmp/" + GenericConfig.SESSION_UID + ".ffn";
+				ffnFile = tmp + File.separator + GenericConfig.SESSION_UID + ".ffn";
 		
 		try {
 			Prompt.print("Running prodigal on genome " + input1 + "...");
 			if(multithread) {
-				ProcParallelProdigal procProdigal = new ProcParallelProdigal(input1, faaFile, "/tmp/", path_ufasta, path_prodigal, thread);
+				ProcParallelProdigal procProdigal = new ProcParallelProdigal(input1, faaFile, tmp + File.separator, path_ufasta, path_prodigal, thread);
 				if(procProdigal.run() < 0) return -1;
 			}
 			else {
@@ -390,8 +411,8 @@ public class EzAAI {
 			// convert profiles into FASTA files
 			List<String> ilist = new ArrayList<>(), jlist = new ArrayList<>();
 			List<String> ilabs = new ArrayList<>(), jlabs = new ArrayList<>();
-			File faaDir = new File("/tmp" + File.separator + GenericConfig.SESSION_UID + "_faa");
-			if(!faaDir.exists()) faaDir.mkdir();
+			File faaDir = new File(tmp + File.separator + GenericConfig.SESSION_UID + "_faa");
+			if(!faaDir.exists()) faaDir.mkdirs();
 			else if(!faaDir.isDirectory()) {
 				Prompt.error("Could not create temporary directory for FASTA files.");
 				return -1;
@@ -450,6 +471,7 @@ public class EzAAI {
 						procAAI.setMode(ProcCalcPairwiseAAI.MODE_BLASTP);
 						break;
 					}
+					procAAI.setGlobaltmp(tmp);
 					procAAI.setNthread(thread);
 					procAAI.setIdentity(identity);
 					procAAI.setCoverage(coverage);
@@ -706,6 +728,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.printf(" %s\t\t%s%n", "-l", "Taxonomic label for phylogenetic tree");
 			System.out.printf(" %s\t\t%s%n", "-t", "Number of CPU threads - multi-threading requires ufasta (default: 1)");
+			System.out.printf(" %s\t%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
 			//System.out.println(String.format(" %s\t\t%s", "  ", "https://github.com/gmarcais/ufasta"));
 			System.out.printf(" %s\t%s%n", "-prodigal", "Custom path to prodigal binary (default: prodigal)");
 			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
@@ -730,6 +753,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.printf(" %s\t\t%s%n", "-l", "Taxonomic label for phylogenetic tree");
+			System.out.printf(" %s\t%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
 			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
 			System.out.println();
 		}
@@ -752,6 +776,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
 			System.out.printf(" %s\t%s%n", "-p      ", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)");
 			System.out.printf(" %s\t%s%n", "-t      ", "Number of CPU threads to use (default: 10)");
+			System.out.printf(" %s\t%s%n", "-tmp    ", "Custom temporary directory (default: /tmp)");
 			System.out.printf(" %s\t%s%n", "-id     ", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)");
 			System.out.printf(" %s\t%s%n", "-cov    ", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)");
 			System.out.printf(" %s\t%s%n", "-match  ", "Path to write a result of matched CDS names");
@@ -793,6 +818,7 @@ public class EzAAI {
 
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
+			System.out.printf(" %s\t%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
 			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
 			System.out.println();
 		}

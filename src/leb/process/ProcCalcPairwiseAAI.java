@@ -23,7 +23,6 @@ import leb.util.config.GenericConfig;
 import leb.wrapper.DiamondWrapper;
 
 public class ProcCalcPairwiseAAI {
-	public static final String TMPDIR = "/tmp/";
 	public static final int 
 		MODE_DEFAULT	= 3,
 		MODE_BLASTP 	= 1,
@@ -31,7 +30,9 @@ public class ProcCalcPairwiseAAI {
 		MODE_MMSEQS 	= 3,
 		MODE_DIAMOND	= 4,
 		MODE_DSENS		= 5;
-	
+
+	private String globaltmp = "/tmp/";
+	public void setGlobaltmp(String globaltmp) {this.globaltmp = globaltmp;}
 	private int mode = MODE_DEFAULT;
 	public void setMode(int mode) {this.mode = mode;}
 	private int nthread = 1;
@@ -262,10 +263,10 @@ public class ProcCalcPairwiseAAI {
 		procBlast.executeMakeBlastDb(faa1, 1, GenericConfig.VERB);
 		procBlast.executeMakeBlastDb(faa2, 1, GenericConfig.VERB);
 		Prompt.print(String.format("Running BLASTp+... (%s vs. %s)", faa1, faa2));
-		procBlast.setOutFileName(TMPDIR + File.separator + GenericConfig.TEMP_HEADER + "vice.out");
+		procBlast.setOutFileName(globaltmp + File.separator + GenericConfig.TEMP_HEADER + "vice.out");
 		List<Blast6FormatHitDomain> hits_vice  = procBlast.execute(faa1, faa2, GenericConfig.VERB);
 		Prompt.print(String.format("Running BLASTp+... (%s vs. %s)", faa2, faa1));
-		procBlast.setOutFileName(TMPDIR + File.separator + GenericConfig.TEMP_HEADER + "versa.out");
+		procBlast.setOutFileName(globaltmp + File.separator + GenericConfig.TEMP_HEADER + "versa.out");
 		List<Blast6FormatHitDomain> hits_versa = procBlast.execute(faa2, faa1, GenericConfig.VERB);
 
 		// Clean up stubs
@@ -347,14 +348,14 @@ public class ProcCalcPairwiseAAI {
 		if(path == null) path = "mmseqs";
 		procMmseqs.setMmseqsPath(path);
 		
-		File mmout = new File(TMPDIR + GenericConfig.SESSION_UID + "_MM");
+		File mmout = new File(globaltmp + GenericConfig.SESSION_UID + "_MM");
 		if(!mmout.exists()) mmout.mkdir();
 		else if(!mmout.isDirectory()) {
 			Prompt.error("FATAL ERROR : MMSeqs2 output directory could not be created.");
 			return null;
 		}
 		String outDir = mmout.getAbsolutePath();
-		String tmpDir = TMPDIR + GenericConfig.SESSION_UID + "_tmp";
+		String tmpDir = globaltmp + GenericConfig.SESSION_UID + "_tmp";
 		
 		procMmseqs.setThreads(nthread);
 		procMmseqs.setAlignmentMode(3);
@@ -394,8 +395,8 @@ public class ProcCalcPairwiseAAI {
 		
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			FileUtils.deleteDirectory(new File(TMPDIR + GenericConfig.SESSION_UID + "_MM"));
-			FileUtils.deleteDirectory(new File(TMPDIR + GenericConfig.SESSION_UID + "_tmp"));
+			FileUtils.deleteDirectory(new File(globaltmp + GenericConfig.SESSION_UID + "_MM"));
+			FileUtils.deleteDirectory(new File(globaltmp + GenericConfig.SESSION_UID + "_tmp"));
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
@@ -421,7 +422,7 @@ public class ProcCalcPairwiseAAI {
 		if(path == null) path = "diamond";
 		procDiamond.setDiamondPath(path);
 		
-		File dmout = new File(TMPDIR + GenericConfig.SESSION_UID + "_DM");
+		File dmout = new File(globaltmp + GenericConfig.SESSION_UID + "_DM");
 		if(!dmout.exists()) dmout.mkdir();
 		else if(!dmout.isDirectory()) {
 			Prompt.error("FATAL ERROR : Diamond output directory could not be created.");
@@ -444,7 +445,7 @@ public class ProcCalcPairwiseAAI {
 		
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			FileUtils.deleteDirectory(new File(TMPDIR + GenericConfig.SESSION_UID + "_DM"));
+			FileUtils.deleteDirectory(new File(globaltmp + GenericConfig.SESSION_UID + "_DM"));
 		//	FileUtils.deleteDirectory(TMPDIR + GenericConfig.SESSION_UID + "_tmp");
 		}
 		
