@@ -31,7 +31,7 @@ public class ProcCalcPairwiseAAI {
 		MODE_DIAMOND	= 4,
 		MODE_DSENS		= 5;
 
-	private String globaltmp = "/tmp/";
+	private String globaltmp = "/tmp";
 	public void setGlobaltmp(String globaltmp) {this.globaltmp = globaltmp;}
 	private int mode = MODE_DEFAULT;
 	public void setMode(int mode) {this.mode = mode;}
@@ -348,14 +348,14 @@ public class ProcCalcPairwiseAAI {
 		if(path == null) path = "mmseqs";
 		procMmseqs.setMmseqsPath(path);
 		
-		File mmout = new File(globaltmp + GenericConfig.SESSION_UID + "_MM");
+		File mmout = new File(globaltmp + File.separator + GenericConfig.SESSION_UID + "_MM");
 		if(!mmout.exists()) mmout.mkdir();
 		else if(!mmout.isDirectory()) {
 			Prompt.error("FATAL ERROR : MMSeqs2 output directory could not be created.");
 			return null;
 		}
 		String outDir = mmout.getAbsolutePath();
-		String tmpDir = globaltmp + GenericConfig.SESSION_UID + "_tmp";
+		String tmpDir = globaltmp + File.separator + GenericConfig.SESSION_UID + "_tmp";
 		
 		procMmseqs.setThreads(nthread);
 		procMmseqs.setAlignmentMode(3);
@@ -395,8 +395,8 @@ public class ProcCalcPairwiseAAI {
 		
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			FileUtils.deleteDirectory(new File(globaltmp + GenericConfig.SESSION_UID + "_MM"));
-			FileUtils.deleteDirectory(new File(globaltmp + GenericConfig.SESSION_UID + "_tmp"));
+			FileUtils.deleteDirectory(new File(globaltmp + File.separator + GenericConfig.SESSION_UID + "_MM"));
+			FileUtils.deleteDirectory(new File(globaltmp + File.separator + GenericConfig.SESSION_UID + "_tmp"));
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
@@ -422,7 +422,7 @@ public class ProcCalcPairwiseAAI {
 		if(path == null) path = "diamond";
 		procDiamond.setDiamondPath(path);
 		
-		File dmout = new File(globaltmp + GenericConfig.SESSION_UID + "_DM");
+		File dmout = new File(globaltmp + File.separator + GenericConfig.SESSION_UID + "_DM");
 		if(!dmout.exists()) dmout.mkdir();
 		else if(!dmout.isDirectory()) {
 			Prompt.error("FATAL ERROR : Diamond output directory could not be created.");
@@ -445,7 +445,7 @@ public class ProcCalcPairwiseAAI {
 		
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			FileUtils.deleteDirectory(new File(globaltmp + GenericConfig.SESSION_UID + "_DM"));
+			FileUtils.deleteDirectory(new File(globaltmp + File.separator + GenericConfig.SESSION_UID + "_DM"));
 		//	FileUtils.deleteDirectory(TMPDIR + GenericConfig.SESSION_UID + "_tmp");
 		}
 		

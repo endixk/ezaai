@@ -345,7 +345,7 @@ public class EzAAI {
 			}
 			Prompt.talk("EzAAI", "Creating a submodule for converting .faa into .db...");
 			EzAAI convertModule = new EzAAI("convert");
-			String[] convertArgs = {"convert", "-i", faaFile, "-s", "prot", "-o", output, "-l", label, "-m", path_mmseqs};
+			String[] convertArgs = {"convert", "-i", faaFile, "-s", "prot", "-o", output, "-l", label, "-m", path_mmseqs, "-tmp", tmp};
 			if(convertModule.run(convertArgs) < 0) return -1;
 			
 			(new File(gffFile)).delete();
@@ -611,6 +611,7 @@ public class EzAAI {
 	private int runConvertDB() {
 		int ret;
 		if((ret = dbToFaa(input1, output)) == 0) {
+			(new File("mm.label")).delete();
 			Prompt.print("Task finished.");
 		}
 		return ret;
