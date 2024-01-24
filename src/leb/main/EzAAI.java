@@ -692,22 +692,23 @@ public class EzAAI {
 			
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar <module> [<args>]");
 			System.out.println();
-		
+
+			String indent = String.valueOf(15);
 			System.out.println(ANSIHandler.wrapper("\n Available modules", 'Y'));
-			System.out.println(ANSIHandler.wrapper(" Module\t\tDescription", 'c'));
-			System.out.printf(" %s\t%s%n", "extract",   "Extract protein DB from genome using Prodigal");
-			System.out.printf(" %s\t%s%n", "convert",   "Convert CDS FASTA file into protein DB");
-			System.out.printf(" %s\t%s%n", "convertdb", "Convert protein DB into FASTA file");
-			System.out.printf(" %s\t%s%n", "calculate", "Calculate AAI value from protein databases using MMSeqs2");
-			System.out.printf(" %s\t%s%n", "cluster",   "Hierarchical clustering of taxa with AAI values");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Module", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "extract",   "Extract protein DB from genome using Prodigal");
+			System.out.printf(" %-"+indent+"s%s%n", "convert",   "Convert CDS FASTA file into protein DB");
+			System.out.printf(" %-"+indent+"s%s%n", "convertdb", "Convert protein DB into FASTA file");
+			System.out.printf(" %-"+indent+"s%s%n", "calculate", "Calculate AAI value from protein databases using MMSeqs2");
+			System.out.printf(" %-"+indent+"s%s%n", "cluster",   "Hierarchical clustering of taxa with AAI values");
 			System.out.println();
 		
 			System.out.println(ANSIHandler.wrapper("\n Miscellaneous", 'Y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t\t%s%n", "-nc", "No-color mode");
-			System.out.printf(" %s\t\t%s%n", "-nt", "No time stamps");
-			System.out.printf(" %s\t\t%s%n", "-v",  "Go verbose");
-			System.out.printf(" %s\t\t%s%n", "-h",  "Print help");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-nc", "No-color mode");
+			System.out.printf(" %-"+indent+"s%s%n", "-nt", "No time stamps");
+			System.out.printf(" %-"+indent+"s%s%n", "-v",  "Go verbose");
+			System.out.printf(" %-"+indent+"s%s%n", "-h",  "Print help");
 			System.out.println();
 		}
 		if(module == MODULE_EXTRACT) {
@@ -717,23 +718,24 @@ public class EzAAI {
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB> [-l <LABEL> -t <THREAD>]");
 			System.out.println();
-		
+
+			String indent = String.valueOf(15);
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t\t%s%n", "-i", "Input prokaryotic genome sequence");
-			System.out.printf(" %s\t\t%s%n", "-o", "Output protein database");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-i", "Input prokaryotic genome sequence");
+			System.out.printf(" %-"+indent+"s%s%n", "-o", "Output protein database");
 			
 			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t\t%s%n", "-l", "Taxonomic label for phylogenetic tree");
-			System.out.printf(" %s\t\t%s%n", "-t", "Number of CPU threads - multi-threading requires ufasta (default: 1)");
-			System.out.printf(" %s\t%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-l", "Taxonomic label for phylogenetic tree");
+			System.out.printf(" %-"+indent+"s%s%n", "-t", "Number of CPU threads - multi-threading requires ufasta (default: 1)");
+			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
 			//System.out.println(String.format(" %s\t\t%s", "  ", "https://github.com/gmarcais/ufasta"));
-			System.out.printf(" %s\t%s%n", "-prodigal", "Custom path to prodigal binary (default: prodigal)");
-			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
-			System.out.printf(" %s\t%s%n", "-ufasta", "Custom path to ufasta binary (default: ufasta)");
+			System.out.printf(" %-"+indent+"s%s%n", "-prodigal", "Custom path to prodigal binary (default: prodigal)");
+			System.out.printf(" %-"+indent+"s%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
+			System.out.printf(" %-"+indent+"s%s%n", "-ufasta", "Custom path to ufasta binary (default: ufasta)");
 			System.out.println();
 		}
 		if(module == MODULE_CONVERT) {
@@ -743,19 +745,20 @@ public class EzAAI {
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB> [-l <LABEL>]");
 			System.out.println();
-		
+
+			String indent = String.valueOf(15);
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t\t%s%n", "-i", "Input CDS file (FASTA format)");
-			System.out.printf(" %s\t\t%s%n", "-s", "Sequence type of input file (nucl/prot)");
-			System.out.printf(" %s\t\t%s%n", "-o", "Output protein DB");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-i", "Input CDS file (FASTA format)");
+			System.out.printf(" %-"+indent+"s%s%n", "-s", "Sequence type of input file (nucl/prot)");
+			System.out.printf(" %-"+indent+"s%s%n", "-o", "Output protein DB");
 			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t\t%s%n", "-l", "Taxonomic label for phylogenetic tree");
-			System.out.printf(" %s\t%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
-			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-l", "Taxonomic label for phylogenetic tree");
+			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
+			System.out.printf(" %-"+indent+"s%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
 			System.out.println();
 		}
 		if(module == MODULE_CALCULATE) {
@@ -765,27 +768,28 @@ public class EzAAI {
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT> [-p <PROGRAM> -t <THREAD> -id <IDENTITY> -cov <COVERAGE> -mtx <MTX_OUTPUT>]");
 			System.out.println();
-		
+
+			String indent = String.valueOf(15);
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t%s%n", "-i      ", "First input protein DB / directory with protein DBs");
-			System.out.printf(" %s\t%s%n", "-j      ", "Second input protein DB / directory with protein DBs");
-			System.out.printf(" %s\t%s%n", "-o      ",  "Output result file");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-i      ", "First input protein DB / directory with protein DBs");
+			System.out.printf(" %-"+indent+"s%s%n", "-j      ", "Second input protein DB / directory with protein DBs");
+			System.out.printf(" %-"+indent+"s%s%n", "-o      ",  "Output result file");
 			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t%s%n", "-p      ", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)");
-			System.out.printf(" %s\t%s%n", "-t      ", "Number of CPU threads to use (default: 10)");
-			System.out.printf(" %s\t%s%n", "-tmp    ", "Custom temporary directory (default: /tmp)");
-			System.out.printf(" %s\t%s%n", "-id     ", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)");
-			System.out.printf(" %s\t%s%n", "-cov    ", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)");
-			System.out.printf(" %s\t%s%n", "-match  ", "Path to write a result of matched CDS names");
-			System.out.printf(" %s\t%s%n", "-mtx    ", "Path to write a Matrix Market formatted output");
-			System.out.printf(" %s\t%s%n", "-mmseqs ", "Custom path to MMSeqs2 binary (default: mmseqs)");
-			System.out.printf(" %s\t%s%n", "-diamond", "Custom path to DIAMOND binary (default: diamond)");
-			System.out.printf(" %s\t%s%n", "-blastp ", "Custom path to BLASTp+ binary (default: blastp)");
-			System.out.printf(" %s\t%s%n", "-blastdb", "Custom path to makeblastdb binary (default: makeblastdb)");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-p      ", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)");
+			System.out.printf(" %-"+indent+"s%s%n", "-t      ", "Number of CPU threads to use (default: 10)");
+			System.out.printf(" %-"+indent+"s%s%n", "-tmp    ", "Custom temporary directory (default: /tmp)");
+			System.out.printf(" %-"+indent+"s%s%n", "-id     ", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)");
+			System.out.printf(" %-"+indent+"s%s%n", "-cov    ", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)");
+			System.out.printf(" %-"+indent+"s%s%n", "-match  ", "Path to write a result of matched CDS names");
+			System.out.printf(" %-"+indent+"s%s%n", "-mtx    ", "Path to write a Matrix Market formatted output");
+			System.out.printf(" %-"+indent+"s%s%n", "-mmseqs ", "Custom path to MMSeqs2 binary (default: mmseqs)");
+			System.out.printf(" %-"+indent+"s%s%n", "-diamond", "Custom path to DIAMOND binary (default: diamond)");
+			System.out.printf(" %-"+indent+"s%s%n", "-blastp ", "Custom path to BLASTp+ binary (default: blastp)");
+			System.out.printf(" %-"+indent+"s%s%n", "-blastdb", "Custom path to makeblastdb binary (default: makeblastdb)");
 			System.out.println();
 		}
 		if(module == MODULE_CLUSTER) {
@@ -795,12 +799,13 @@ public class EzAAI {
 		
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar cluster -i <AAI_TABLE> -o <OUTPUT>");
 			System.out.println();
-		
+
+			String indent = String.valueOf(15);
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t\t%s%n", "-i", "Input EzAAI result file containing all-by-all pairwise AAI values");
-			System.out.printf(" %s\t\t%s%n", "-o",  "Output result file");
-			System.out.printf(" %s\t\t%s%n", "-u",  "Use ID instead of label for tree");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-i", "Input EzAAI result file containing all-by-all pairwise AAI values");
+			System.out.printf(" %-"+indent+"s%s%n", "-o",  "Output result file");
+			System.out.printf(" %-"+indent+"s%s%n", "-u",  "Use ID instead of label for tree");
 			System.out.println();
 		}
 		if(module == MODULE_CONVERTDB) {
@@ -811,16 +816,17 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar convertdb -i <IN_DB> -o <OUT_FA>");
 			System.out.println();
 
+			String indent = String.valueOf(15);
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t\t%s%n", "-i", "Input protein DB");
-			System.out.printf(" %s\t\t%s%n", "-o", "Output FASTA file");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-i", "Input protein DB");
+			System.out.printf(" %-"+indent+"s%s%n", "-o", "Output FASTA file");
 			System.out.println();
 
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
-			System.out.println(ANSIHandler.wrapper(" Argument\tDescription", 'c'));
-			System.out.printf(" %s\t%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
-			System.out.printf(" %s\t%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
+			System.out.printf(" %-"+indent+"s%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
 			System.out.println();
 		}
 	}
