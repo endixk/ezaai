@@ -77,6 +77,7 @@ public class EzAAI {
 	
 	String label = null; // convert, extract
 	String input2 = null, matchout = null, mtxout = null; int thread = 10; double identity = 0.4, coverage = 0.5; // calculate
+	boolean self = false; // calculate
 	int program = PROGRAM_MMSEQS; // calculate
 	boolean useid = false; // cluster
 	
@@ -185,6 +186,13 @@ public class EzAAI {
 				File fileInput = new File(input2);
 				if(!fileInput.exists()) {
 					Prompt.error("Invalid input file given.");
+					return -1;
+				}
+			}
+			if(arg.get("-self") != null) {
+				self = Integer.parseInt(arg.get("-self")) != 0;
+				if(self && !input1.equals(input2)) {
+					Prompt.error("Self-comparison with different input files is not allowed.");
 					return -1;
 				}
 			}
@@ -407,6 +415,11 @@ public class EzAAI {
 				jnames = new String[1];
 				jnames[0] = jfile.getAbsolutePath();
 			}
+
+			if(self && inames.length <= 1) {
+				Prompt.error("Self-comparison requires directory with at least two files.");
+				return -1;
+			}
 			
 			// convert profiles into FASTA files
 			List<String> ilist = new ArrayList<>(), jlist = new ArrayList<>();
@@ -450,10 +463,12 @@ public class EzAAI {
 			Double[][] aaiTable = new Double[ilist.size()][jlist.size()];
 			Integer[][] hitTable = new Integer[ilist.size()][jlist.size()];
 			Integer[] ilens = new Integer[ilist.size()], jlens = new Integer[jlist.size()];
-			
+
+			int it = 0, sz = self ? (ilist.size() * (ilist.size() - 1) / 2) : (ilist.size() * jlist.size());
 			for(int i = 0; i < ilist.size(); i++) {
 				for(int j = 0; j < jlist.size(); j++) {
-					Prompt.print(String.format("Calculating AAI... [Task %d/%d]", i*jlist.size()+j+1, ilist.size()*jlist.size()));
+					if(self && i >= j) { continue; }
+					Prompt.print(String.format("Calculating AAI... [Task %d/%d]", ++it, sz));
 					ProcCalcPairwiseAAI procAAI = new ProcCalcPairwiseAAI();
 
 					switch(program) {
@@ -479,11 +494,25 @@ public class EzAAI {
 					List<String> res = procAAI.calculateProteomePairWithDetails(ilabs.get(i), jlabs.get(j), ilist.get(i), jlist.get(j));
 					hitTable[i][j] = Integer.parseInt(res.get(4));
 					aaiTable[i][j] = Double.parseDouble(res.get(6));
-					if(j == 0) ilens[i] = Integer.parseInt(res.get(0));
-					if(i == 0) jlens[j] = Integer.parseInt(res.get(1));
+					if(ilens[i] == null) ilens[i] = Integer.parseInt(res.get(0));
+					if(jlens[j] == null) jlens[j] = Integer.parseInt(res.get(1));
 				}
 			}
 			if(maw != null) maw.close();
+
+			// if self, fill the remaining cells
+			if(self) {
+				for(int i = 0; i < ilist.size(); i++) {
+					if(jlens[i] == null) jlens[i] = ilens[i];
+					if(ilens[i] == null) ilens[i] = jlens[i];
+					aaiTable[i][i] = 100.0;
+					hitTable[i][i] = ilens[i];
+					for(int j = i+1; j < jlist.size(); j++) {
+						aaiTable[j][i] = aaiTable[i][j];
+						hitTable[j][i] = hitTable[i][j];
+					}
+				}
+			}
 			
 			// print result into output file
 			BufferedWriter bw = new BufferedWriter(new FileWriter(output, outExists));
@@ -782,6 +811,7 @@ public class EzAAI {
 			System.out.printf(" %-"+indent+"s%s%n", "-p      ", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)");
 			System.out.printf(" %-"+indent+"s%s%n", "-t      ", "Number of CPU threads to use (default: 10)");
 			System.out.printf(" %-"+indent+"s%s%n", "-tmp    ", "Custom temporary directory (default: /tmp)");
+			System.out.printf(" %-"+indent+"s%s%n", "-self   ", "Assume self-comparison; -i and -j must be identical [0 / 1] (default: 0)");
 			System.out.printf(" %-"+indent+"s%s%n", "-id     ", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)");
 			System.out.printf(" %-"+indent+"s%s%n", "-cov    ", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)");
 			System.out.printf(" %-"+indent+"s%s%n", "-match  ", "Path to write a result of matched CDS names");
