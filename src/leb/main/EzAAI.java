@@ -111,6 +111,10 @@ public class EzAAI {
 		else {
 			output = arg.get("-o");
 			if((new File(output)).exists()) {
+				if((new File(output)).isDirectory()) {
+					Prompt.error("Given output file exists and is a directory: " + output);
+					return -1;
+				}
 				outExists = true;
 				if(module == MODULE_CALCULATE) Prompt.warning("Output file exists. Results will be appended.");
 				else Prompt.warning("Output file exists. Results will be overwritten.");
@@ -388,6 +392,18 @@ public class EzAAI {
 		Prompt.debug("EzAAI - calculate module");
 		
 		try {
+			// check output file format
+			if(outExists) {
+				BufferedReader br = new BufferedReader(new FileReader(output));
+				String line = br.readLine();
+				if(line == null) {
+					Prompt.warning("Empty output file given.");
+					outExists = false;
+				} else if(!line.equals("ID 1\tID 2\tLabel 1\tLabel 2\tAAI\tCDS count 1\tCDS count 2\tMatched count\tProteome cov.\tID param.\tCov. param.")) {
+					Prompt.error("Invalid output file given.");
+					return -1;
+				}
+			}
 			// prepare profiles
 			File ifile = new File(input1), jfile = new File(input2);
 			String[] inames, jnames;
