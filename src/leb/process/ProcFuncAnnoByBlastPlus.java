@@ -13,7 +13,7 @@ import leb.wrapper.MakeBlastDbWrapper;
 
 public class ProcFuncAnnoByBlastPlus {
 
-	private final String tmpDir = "/tmp";
+	private final String tmpDir = "/tmp/ezaai";
 
 	private double evalue = 0;
 

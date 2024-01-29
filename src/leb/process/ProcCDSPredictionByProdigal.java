@@ -6,7 +6,7 @@ import leb.wrapper.ProdigalWrapper;
 
 public class ProcCDSPredictionByProdigal {
 
-	private final String outDir = "/tmp";
+	private String outDir = "/tmp/ezaai";
 	
 	private String prodigalPath = "prodigal";
 	
@@ -19,6 +19,8 @@ public class ProcCDSPredictionByProdigal {
     private String faaOutFileName = outDir + File.separator + "prodigal.faa";
     
     private String ffnOutFileName = outDir + File.separator + "prodigal.ffn";
+
+	public void setOutDir(String outDir) { this.outDir = outDir; }
 
 	public void setProdigalPath(String prodigalPath) {
 		this.prodigalPath = prodigalPath;
@@ -39,7 +41,7 @@ public class ProcCDSPredictionByProdigal {
 	public void execute(String seqFileName, boolean ignoredVerbose) {
 		
 		File dir = new File(outDir);
-		if(!dir.exists()) dir.mkdir();
+		if(!dir.exists()) dir.mkdirs();
 
 //	    gffOutFileName = outDir + File.separator + "prodigal.gff";
 //	    faaOutFileName = outDir + File.separator + "prodigal.faa";	    

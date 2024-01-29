@@ -62,7 +62,7 @@ public class EzAAI {
 	}
 	
 	// Argument variables
-	String input1 = null, output = null, tmp = "/tmp"; // universal
+	String input1 = null, output = null, tmp = "/tmp/ezaai"; // universal
 	boolean outExists = false;
 	boolean seqNucl = true; // convert
 	boolean multithread = false; // extract
@@ -349,6 +349,7 @@ public class EzAAI {
 			}
 			else {
 				ProcCDSPredictionByProdigal procProdigal = new ProcCDSPredictionByProdigal();
+				procProdigal.setOutDir(tmp + File.separator);
 				procProdigal.setProdigalPath(path_prodigal);
 				procProdigal.setGffOutFileName(gffFile);
 				procProdigal.setFaaOutFileName(faaFile);
@@ -776,7 +777,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
 			System.out.printf(" %-"+indent+"s%s%n", "-l", "Taxonomic label for phylogenetic tree");
 			System.out.printf(" %-"+indent+"s%s%n", "-t", "Number of CPU threads - multi-threading requires ufasta (default: 1)");
-			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
+			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp/ezaai)");
 			//System.out.println(String.format(" %s\t\t%s", "  ", "https://github.com/gmarcais/ufasta"));
 			System.out.printf(" %-"+indent+"s%s%n", "-prodigal", "Custom path to prodigal binary (default: prodigal)");
 			System.out.printf(" %-"+indent+"s%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
@@ -802,7 +803,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
 			System.out.printf(" %-"+indent+"s%s%n", "-l", "Taxonomic label for phylogenetic tree");
-			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
+			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp/ezaai)");
 			System.out.printf(" %-"+indent+"s%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
 			System.out.println();
 		}
@@ -826,7 +827,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
 			System.out.printf(" %-"+indent+"s%s%n", "-p      ", "Customize calculation program [mmseqs / diamond / blastp] (default: mmseqs)");
 			System.out.printf(" %-"+indent+"s%s%n", "-t      ", "Number of CPU threads to use (default: 10)");
-			System.out.printf(" %-"+indent+"s%s%n", "-tmp    ", "Custom temporary directory (default: /tmp)");
+			System.out.printf(" %-"+indent+"s%s%n", "-tmp    ", "Custom temporary directory (default: /tmp/ezaai)");
 			System.out.printf(" %-"+indent+"s%s%n", "-self   ", "Assume self-comparison; -i and -j must be identical [0 / 1] (default: 0)");
 			System.out.printf(" %-"+indent+"s%s%n", "-id     ", "Minimum identity threshold for AAI calculations [0 - 1.0] (default: 0.4)");
 			System.out.printf(" %-"+indent+"s%s%n", "-cov    ", "Minimum query coverage threshold for AAI calculations [0 - 1.0] (default: 0.5)");
@@ -871,7 +872,7 @@ public class EzAAI {
 
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
 			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
-			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp)");
+			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp/ezaai)");
 			System.out.printf(" %-"+indent+"s%s%n", "-mmseqs", "Custom path to MMSeqs2 binary (default: mmseqs)");
 			System.out.println();
 		}

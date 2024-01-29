@@ -31,7 +31,7 @@ public class ProcCalcPairwiseAAI {
 		MODE_DIAMOND	= 4,
 		MODE_DSENS		= 5;
 
-	private String globaltmp = "/tmp";
+	private String globaltmp = "/tmp/ezaai";
 	public void setGlobaltmp(String globaltmp) {this.globaltmp = globaltmp;}
 	private int mode = MODE_DEFAULT;
 	public void setMode(int mode) {this.mode = mode;}

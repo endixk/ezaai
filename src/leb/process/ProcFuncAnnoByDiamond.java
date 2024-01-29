@@ -13,7 +13,7 @@ import leb.wrapper.DiamondWrapper;
 
 public class ProcFuncAnnoByDiamond {
 	
-	private String outDir = "/tmp";
+	private String outDir = "/tmp/ezaai";
 	
 	private String diamondPath = "diamond";
 	
