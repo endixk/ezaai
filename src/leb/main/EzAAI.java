@@ -290,7 +290,7 @@ public class EzAAI {
 				String title = seq.getTitle();
 				String dna = seq.getSequence();
 				String prot = seqNucl ? Seqtools.translate_CDS(dna, 11, true) : dna;
-				bw.write(String.format(">%s # %d # %d\n%s\n", title.split("\\s+")[0], 1, prot.length()*3 + 3, prot));
+				bw.write(String.format(">ezaai_%s # %d # %d\n%s\n", title.split("\\s+")[0], 1, prot.length()*3 + 3, prot));
 			}
 			bw.close();
 			
