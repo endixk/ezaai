@@ -30,13 +30,13 @@ import org.apache.commons.io.FileUtils;
 import java.util.ArrayList;
 
 public class EzAAI {
-	public static final String VERSION  = "v1.2.2",
-							   RELEASE  = "Aug. 2022",
+	public static final String VERSION  = "v1.2.3",
+							   RELEASE  = "Feb. 2024",
 							   CITATION = " Kim, D., Park, S. & Chun, J.\n"
 							   			+ " Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity.\n"
 							   			+ " J Microbiol. 59, 476–480 (2021).\n"
 							   			+ " DOI: 10.1007/s12275-021-1154-0";
-	public static final boolean STABLE  = false;
+	public static final boolean STABLE  = true;
 	
 	final static int MODULE_CONVERT 	= 1,
 					 MODULE_EXTRACT 	= 2,
