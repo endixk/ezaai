@@ -13,7 +13,7 @@ EzAAI is a suite of workflows for improved AAI calculation performance along wit
 
 ~~~bash
 conda install -c bioconda -y ezaai
-EzAAI -h
+ezaai -h
 ~~~
 
 ## Available modules
@@ -21,7 +21,7 @@ EzAAI -h
  * Extract protein database from genome using Prodigal
 
 ~~~bash
-EzAAI extract -i <IN_SEQ> -o <OUT_DB>
+ezaai extract -i <IN_SEQ> -o <OUT_DB>
 ~~~
 
 |Argument|Description|
@@ -35,7 +35,7 @@ EzAAI extract -i <IN_SEQ> -o <OUT_DB>
  * Calculate AAI value from protein databases using MMseqs2
 
 ~~~bash
-EzAAI calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT>
+ezaai calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT>
 ~~~
 
 |Argument|Description|
@@ -50,7 +50,7 @@ EzAAI calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT>
  * Convert CDS FASTA file into MMseqs2 database
 
 ~~~bash
-EzAAI convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB>
+ezaai convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB>
 ~~~
 
 |Argument|Description|
@@ -65,7 +65,7 @@ EzAAI convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB>
  * Hierarchical clustering of taxa with AAI values
 
 ~~~bash
-EzAAI cluster -i <AAI_TABLE> -o <OUTPUT>
+ezaai cluster -i <AAI_TABLE> -o <OUTPUT>
 ~~~
 
 |Argument|Description|
