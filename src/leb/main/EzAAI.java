@@ -20,14 +20,18 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.List;
-import java.util.Random;
-import java.util.Map;
-import java.util.HashMap;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.commons.io.FileUtils;
-
-import java.util.ArrayList;
 
 public class EzAAI {
 	public static final String VERSION  = "v1.2.3",
@@ -36,7 +40,7 @@ public class EzAAI {
 							   			+ " Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity.\n"
 							   			+ " J Microbiol. 59, 476–480 (2021).\n"
 							   			+ " DOI: 10.1007/s12275-021-1154-0";
-	public static final boolean STABLE  = true;
+	public static final boolean STABLE  = false;
 	
 	final static int MODULE_CONVERT 	= 1,
 					 MODULE_EXTRACT 	= 2,
@@ -65,8 +69,8 @@ public class EzAAI {
 	String input1 = null, output = null, tmp = "/tmp/ezaai"; // universal
 	boolean outExists = false;
 	boolean seqNucl = true; // convert
-	boolean multithread = false; // extract
-	
+	boolean multithread = false, batchExtract = false; // extract
+
 	// binary paths
 	String  path_prodigal = "prodigal",
 			path_mmseqs   = "mmseqs",
@@ -99,9 +103,13 @@ public class EzAAI {
 		else{
 			input1 = arg.get("-i");
 			File fileInput = new File(input1);
-			if(!fileInput.exists() || (fileInput.isDirectory() && module != MODULE_CALCULATE)) {
+			if(!fileInput.exists() || (fileInput.isDirectory() && !(module == MODULE_EXTRACT || module == MODULE_CALCULATE))) {
 				Prompt.error("Invalid input file given.");
 				return -1;
+			}
+			if(fileInput.isDirectory() && module == MODULE_EXTRACT) {
+				Prompt.talk("Input is a directory. Running in batch mode.");
+				batchExtract = true;
 			}
 		}
 		if(arg.get("-o") == null) {
@@ -112,12 +120,22 @@ public class EzAAI {
 			output = arg.get("-o");
 			if((new File(output)).exists()) {
 				if((new File(output)).isDirectory()) {
-					Prompt.error("Given output file exists and is a directory: " + output);
-					return -1;
+					if(!batchExtract) {
+						Prompt.error("Given output file exists and is a directory: " + output);
+						return -1;
+					}
 				}
 				outExists = true;
 				if(module == MODULE_CALCULATE) Prompt.warning("Output file exists. Results will be appended.");
-				else Prompt.warning("Output file exists. Results will be overwritten.");
+				else if(!batchExtract) Prompt.warning("Output file exists. Results will be overwritten.");
+				else Prompt.warning("Output directory exists. Results will be written to this directory.");
+			} else if(batchExtract) {
+				if(new File(output).mkdirs()) {
+					Prompt.talk("Created output directory: " + output);
+				} else {
+					Prompt.error("Failed to create output directory: " + output);
+					return -1;
+				}
 			}
 		}
 		if(arg.get("-tmp") != null) {
@@ -154,12 +172,13 @@ public class EzAAI {
 		}
 		if(module == MODULE_EXTRACT) {
 		//	if(arg.get("-p") != null) path_prodigal = arg.get("-p");
-			if(arg.get("-l") == null) label = input1;
+			// check if input is a directory, if so, set to extract in batch mode
+			if(arg.get("-l") == null) label = batchExtract ? null : input1;
 			else label = arg.get("-l");
 			if(arg.get("-m") != null) path_mmseqs = arg.get("-m");
 			if(arg.get("-t") != null) {
 				thread = Integer.parseInt(arg.get("-t"));
-				if(thread > 1) multithread = true;
+				if(thread > 1 && !batchExtract) multithread = true;
 			}
 			else thread = 1;
 		}
@@ -337,6 +356,8 @@ public class EzAAI {
 	
 	private int runExtract() {
 		Prompt.debug("EzAAI - extract module");
+		if(batchExtract) return runExtractBatch();
+
 		String  gffFile = tmp + File.separator + GenericConfig.SESSION_UID + ".gff",
 				faaFile = input1 + ".faa",
 				ffnFile = tmp + File.separator + GenericConfig.SESSION_UID + ".ffn";
@@ -373,7 +394,123 @@ public class EzAAI {
 		Prompt.print("Task finished.");
 		return 0;
 	}
-	
+
+	private int runExtractBatch() {
+		class extractThread implements Callable<Integer> {
+			private final String prodigal, input, output, tmp, label, session;
+			public extractThread(String prodigal, String input, String output, String tmp, String label) {
+				this.prodigal = prodigal;
+				this.input = input;
+				this.output = output;
+				this.tmp = tmp;
+				this.label = label;
+				this.session = GenericConfig.SESSION_UID + "_" + new Random().nextInt(Integer.MAX_VALUE);
+			}
+			public synchronized Integer call() {
+				String gffFile = tmp + File.separator + session + ".gff",
+					   faaFile = tmp + File.separator + session + ".faa",
+					   ffnFile = tmp + File.separator + session + ".ffn";
+
+				// get id from the input file by trimming file extension
+				String id = (new File(input)).getName();
+				int lastDot = id.lastIndexOf('.');
+				if(lastDot > 0) id = id.substring(0, lastDot);
+
+				// run prodigal
+				try {
+					ProcCDSPredictionByProdigal procProdigal = new ProcCDSPredictionByProdigal();
+					procProdigal.setOutDir(tmp + File.separator);
+					procProdigal.setProdigalPath(prodigal);
+					procProdigal.setGffOutFileName(gffFile);
+					procProdigal.setFaaOutFileName(faaFile);
+					procProdigal.setFfnOutFileName(ffnFile);
+					procProdigal.execute(input, GenericConfig.DEV);
+				} catch(Exception e) {
+					e.printStackTrace();
+					return -1;
+				}
+
+				// run convert submodule
+				try {
+					EzAAI convertModule = new EzAAI("convert");
+					String[] convertArgs = {"convert", "-i", faaFile, "-s", "prot", "-o", output + File.separator + id + ".db",
+							"-l", label, "-m", path_mmseqs, "-tmp", tmp};
+					if(convertModule.run(convertArgs) < 0) return -1;
+				} catch(Exception e) {
+					e.printStackTrace();
+					return -1;
+				}
+
+				// clean up
+				try { Files.delete(Paths.get(gffFile)); }
+				catch(IOException e) { Prompt.warning("Failed to delete temporary file: " + gffFile); }
+				try { Files.delete(Paths.get(faaFile)); }
+				catch(IOException e) { Prompt.warning("Failed to delete temporary file: " + faaFile); }
+				try { Files.delete(Paths.get(ffnFile)); }
+				catch(IOException e) { Prompt.warning("Failed to delete temporary file: " + ffnFile); }
+
+				return 0;
+			}
+		}
+
+		// check input directory
+		File inputDir = new File(input1);
+		if(inputDir.list() == null) {
+			Prompt.error("Input directory is empty.");
+			return -1;
+		}
+
+		// list files in input directory
+		ArrayList<String> files = new ArrayList<>();
+		for(String file : Objects.requireNonNull(inputDir.list())) {
+			if(file.endsWith(".fa") || file.endsWith(".fna") || file.endsWith(".fasta")) {
+				files.add(inputDir.getAbsolutePath() + File.separator + file);
+			}
+		}
+
+		// parse label file
+		HashMap<String, String> labelMap = new HashMap<>();
+		if(label != null) {
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(label));
+				String line;
+				while((line = br.readLine()) != null) {
+					String[] parts = line.split("\t");
+					if(parts.length < 2) continue; // skip invalid lines
+					int lastSep = parts[0].lastIndexOf(File.separator);
+					String basename = lastSep < 0 ? parts[0] : parts[0].substring(lastSep + 1);
+					labelMap.put(inputDir.getAbsolutePath() + File.separator + basename, parts[1]);
+				}
+				br.close();
+			} catch(IOException e) {
+				Prompt.warning("Failed to read label file: " + label + ". Using file names as labels.");
+			}
+		}
+
+		// process files in parallel
+		ExecutorService executor = Executors.newFixedThreadPool(thread);
+		List<Future<Integer>> futures = new ArrayList<>();
+		for(String file : files) {
+			String labelName = labelMap.getOrDefault(file, new File(file).getName());
+			extractThread et = new extractThread(path_prodigal, file, output, tmp, labelName);
+			futures.add(executor.submit(et));
+		}
+		executor.shutdown();
+		try {
+			for (Future<Integer> future : futures)
+				if (future.get() < 0) {
+					Prompt.error("An error occurred during batch extraction.");
+					return -1;
+				}
+		} catch (InterruptedException | ExecutionException e) {
+			Prompt.error("An error occurred during batch extraction: " + e.getMessage());
+			return -1;
+		}
+
+		Prompt.print("Task finished.");
+		return 0;
+	}
+
 	private int dbToFaa(String dbPath, String faaPath) {
 		try {
 			Shell.exec("tar -x -z -f " + dbPath);

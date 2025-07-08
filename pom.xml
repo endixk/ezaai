@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>EzAAI</groupId>
     <artifactId>EzAAI</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
 
     <dependencies>
         <dependency>
@@ -46,6 +46,23 @@
                             <mainClass>leb.main.EzAAI</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.10</version>
+                <configuration>
+                    <assembleDirectory>${project.build.directory}</assembleDirectory>
+                    <programs>
+                        <program>
+                            <mainClass>leb.main.EzAAI</mainClass>
+                            <platforms>
+                                <platform>unix</platform>
+                            </platforms>
+                            <id>ezaai</id>
+                        </program>
+                    </programs>
                 </configuration>
             </plugin>
         </plugins>
