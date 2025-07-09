@@ -19,24 +19,24 @@ public class Prompt {
 	}
 	
 	// universal standard for prompt line print
-	public static void print_univ(String head, String message, char color) {
+	public static synchronized void print_univ(String head, String message, char color) {
 		System.out.println(buildMessage(head, message, color));
 	}
 	
 	public static void print(String head, String message){
-		print_univ(head, message, 'C');
+		if(!GenericConfig.QUIET) print_univ(head, message, 'C');
 	}
 	public static void print(String message){
 		print(GenericConfig.PHEAD, message);
 	}
 	public static void talk(String head, String message) {
-		if(GenericConfig.VERB) print_univ(head, message, 'c');
+		if(GenericConfig.VERB & !GenericConfig.QUIET) print_univ(head, message, 'c');
 	}
 	public static void talk(String message) {
 		talk(GenericConfig.PHEAD, message);
 	}
 	public static void debug(String head, String message) {
-		if(GenericConfig.DEV) print_univ(head, message, 'G');
+		if(GenericConfig.DEV & !GenericConfig.QUIET) print_univ(head, message, 'G');
 	}
 	public static void debug(String message) { 
 		debug("DEV", message);

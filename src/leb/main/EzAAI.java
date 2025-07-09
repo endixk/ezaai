@@ -126,9 +126,9 @@ public class EzAAI {
 					}
 				}
 				outExists = true;
-				if(module == MODULE_CALCULATE) Prompt.warning("Output file exists. Results will be appended.");
-				else if(!batchExtract) Prompt.warning("Output file exists. Results will be overwritten.");
-				else Prompt.warning("Output directory exists. Results will be written to this directory.");
+				if(module == MODULE_CALCULATE) Prompt.warning("Output file "+output+" exists. Results will be appended.");
+				else if(!batchExtract) Prompt.warning("Output "+output+" file exists. Results will be overwritten.");
+				else Prompt.warning("Output directory "+output+" exists. Results will be written to this directory.");
 			} else if(batchExtract) {
 				if(new File(output).mkdirs()) {
 					Prompt.talk("Created output directory: " + output);
@@ -406,7 +406,7 @@ public class EzAAI {
 				this.label = label;
 				this.session = GenericConfig.SESSION_UID + "_" + new Random().nextInt(Integer.MAX_VALUE);
 			}
-			public synchronized Integer call() {
+			public Integer call() {
 				String gffFile = tmp + File.separator + session + ".gff",
 					   faaFile = tmp + File.separator + session + ".faa",
 					   ffnFile = tmp + File.separator + session + ".ffn";
@@ -449,6 +449,8 @@ public class EzAAI {
 				try { Files.delete(Paths.get(ffnFile)); }
 				catch(IOException e) { Prompt.warning("Failed to delete temporary file: " + ffnFile); }
 
+				// report
+				Prompt.print_univ(GenericConfig.PHEAD, "Database extraction completed: " + output + File.separator + id + ".db", 'C');
 				return 0;
 			}
 		}
@@ -488,6 +490,8 @@ public class EzAAI {
 		}
 
 		// process files in parallel
+		boolean quiet = GenericConfig.QUIET;
+		GenericConfig.QUIET = true;
 		ExecutorService executor = Executors.newFixedThreadPool(thread);
 		List<Future<Integer>> futures = new ArrayList<>();
 		for(String file : files) {
@@ -506,6 +510,7 @@ public class EzAAI {
 			Prompt.error("An error occurred during batch extraction: " + e.getMessage());
 			return -1;
 		}
+		GenericConfig.QUIET = quiet;
 
 		Prompt.print("Task finished.");
 		return 0;
@@ -838,6 +843,7 @@ public class EzAAI {
 		
 		Arguments arg = new Arguments(args);
 		if(arg.get("-v") != null) GenericConfig.VERB = true;
+		if(arg.get("-q") != null) GenericConfig.QUIET = true;
 		if(arg.get("-dev") != null) {
 			GenericConfig.VERB = true;
 			GenericConfig.DEV = true;
@@ -891,6 +897,7 @@ public class EzAAI {
 			System.out.printf(" %-"+indent+"s%s%n", "-nc", "No-color mode");
 			System.out.printf(" %-"+indent+"s%s%n", "-nt", "No time stamps");
 			System.out.printf(" %-"+indent+"s%s%n", "-v",  "Go verbose");
+			System.out.printf(" %-"+indent+"s%s%n", "-q",  "Go quiet (no output except warnings/errors)");
 			System.out.printf(" %-"+indent+"s%s%n", "-h",  "Print help");
 			System.out.println();
 		}

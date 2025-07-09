@@ -23,7 +23,8 @@ public class GenericConfig {
 	
 	public static final String SESSION_UID = Long.toHexString(new Random().nextLong());
 	public static String TEMP_HEADER = SESSION_UID + "_";
-	
+
+	public static boolean QUIET = false;    // Suppress general messages
 	public static boolean DEV = false;      // Developer mode
 	public static boolean VERB = false; 	// Program verbosity
 	public static boolean NOCOLOR = false;  // No color escapes
