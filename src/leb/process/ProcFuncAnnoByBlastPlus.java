@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import leb.util.common.FileRemover;
 import leb.util.seq.Blast6FormatHitDomain;
 import leb.wrapper.BlastPlusWrapper;
 import leb.wrapper.MakeBlastDbWrapper;
@@ -81,8 +82,8 @@ public class ProcFuncAnnoByBlastPlus {
 		
 		List<Blast6FormatHitDomain> hitList = parseOutFile(f_out.getAbsolutePath());
 
-		if(!keepBlastOutput) f_out.delete();
-		
+		if(!keepBlastOutput) FileRemover.safeDelete(outFileName);
+
 		return hitList;
 		
 	}//method end

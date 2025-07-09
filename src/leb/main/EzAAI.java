@@ -7,6 +7,7 @@ import leb.process.ProcCDSPredictionByProdigal;
 import leb.process.ProcParallelProdigal;
 import leb.util.common.ANSIHandler;
 import leb.util.common.Arguments;
+import leb.util.common.FileRemover;
 import leb.util.common.Prompt;
 import leb.util.common.Shell;
 import leb.util.config.GenericConfig;
@@ -21,8 +22,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.nio.file.Files;
 
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -30,8 +29,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import org.apache.commons.io.FileUtils;
 
 public class EzAAI {
 	public static final String VERSION  = "v1.2.3",
@@ -337,12 +334,9 @@ public class EzAAI {
 			Shell.exec(buf.toString(), new File(dir));
 			Shell.exec("mv " + dir + File.separator + "mm.tar.gz " + output);
 			
-			// remove temporary files
-			for(String name : names) (new File(dir + File.separator + name)).delete();
-			(new File(dir)).delete();
-			
-			// tidy up
-			(new File(faaPath)).delete();
+			// remove files
+			FileRemover.safeDeleteDirectory(dir);
+			FileRemover.safeDelete(faaPath);
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -381,11 +375,10 @@ public class EzAAI {
 			EzAAI convertModule = new EzAAI("convert");
 			String[] convertArgs = {"convert", "-i", faaFile, "-s", "prot", "-o", output, "-l", label, "-m", path_mmseqs, "-tmp", tmp};
 			if(convertModule.run(convertArgs) < 0) return -1;
-			
-			(new File(gffFile)).delete();
-			(new File(faaFile)).delete();
-			(new File(ffnFile)).delete();
-			
+
+			FileRemover.safeDelete(gffFile);
+			FileRemover.safeDelete(faaFile);
+			FileRemover.safeDelete(ffnFile);
 		} catch(Exception e) {
 			e.printStackTrace();
 			return -1;
@@ -442,12 +435,9 @@ public class EzAAI {
 				}
 
 				// clean up
-				try { Files.delete(Paths.get(gffFile)); }
-				catch(IOException e) { Prompt.warning("Failed to delete temporary file: " + gffFile); }
-				try { Files.delete(Paths.get(faaFile)); }
-				catch(IOException e) { Prompt.warning("Failed to delete temporary file: " + faaFile); }
-				try { Files.delete(Paths.get(ffnFile)); }
-				catch(IOException e) { Prompt.warning("Failed to delete temporary file: " + ffnFile); }
+				FileRemover.safeDelete(gffFile);
+				FileRemover.safeDelete(faaFile);
+				FileRemover.safeDelete(ffnFile);
 
 				// report
 				Prompt.print_univ(GenericConfig.PHEAD, "Database extraction completed: " + output + File.separator + id + ".db", 'C');
@@ -523,7 +513,7 @@ public class EzAAI {
 			procMmseqs.setMmseqsPath(path_mmseqs);
 			procMmseqs.executeConvert2Fasta("mm", faaPath);
 			String[] struct = {"mm", "mm.dbtype", "mm.index", "mm.lookup", "mm.source", "mm_h", "mm_h.dbtype", "mm_h.index"};
-			for(String str : struct) (new File(str)).delete();
+			for(String str : struct) FileRemover.safeDelete(str);
 		} catch(Exception e) {
 			e.printStackTrace();
 			return -1;
@@ -598,7 +588,7 @@ public class EzAAI {
 				BufferedReader br = new BufferedReader(new FileReader("mm.label"));
 				ilabs.add(br.readLine());
 				br.close();
-				(new File("mm.label")).delete();
+				FileRemover.safeDelete("mm.label");
 			}
 			for(int j = 0 ; j < jnames.length; j++) {
 				String faaPath = faaDir + File.separator + "j" + j + ".faa";
@@ -608,7 +598,7 @@ public class EzAAI {
 				BufferedReader br = new BufferedReader(new FileReader("mm.label"));
 				jlabs.add(br.readLine());
 				br.close();
-				(new File("mm.label")).delete();
+				FileRemover.safeDelete("mm.label");
 			}
 
 			// prepare match output
@@ -698,7 +688,7 @@ public class EzAAI {
 				mw.close();
 			}
 			// remove directory
-			FileUtils.deleteDirectory(faaDir);
+			FileRemover.safeDeleteDirectory(tmp + File.separator + GenericConfig.SESSION_UID + "_faa");
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -799,7 +789,7 @@ public class EzAAI {
 	private int runConvertDB() {
 		int ret;
 		if((ret = dbToFaa(input1, output)) == 0) {
-			(new File("mm.label")).delete();
+			FileRemover.safeDelete("mm.label");
 			Prompt.print("Task finished.");
 		}
 		return ret;

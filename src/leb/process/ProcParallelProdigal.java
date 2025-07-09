@@ -1,5 +1,6 @@
 package leb.process;
 
+import leb.util.common.FileRemover;
 import leb.util.common.Shell;
 import leb.util.config.GenericConfig;
 
@@ -10,9 +11,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-//import java.util.concurrent.TimeUnit;
-
-import java.io.File;
 
 public class ProcParallelProdigal {
 	private final String input, output, temp, ufasta, prodigal;
@@ -64,9 +62,9 @@ public class ProcParallelProdigal {
 	
 	private void clean() {
 		for(int i = 0; i < thread; i++) {
-			(new File(String.format("%s_%d.fa", temp + GenericConfig.SESSION_UID, i))).delete();
-			(new File(String.format("%s_%d.out.fa", temp + GenericConfig.SESSION_UID, i))).delete();
-			(new File(String.format("%s_%d.fa.log", temp + GenericConfig.SESSION_UID, i))).delete();
+			FileRemover.safeDelete(String.format("%s_%d.fa", temp + GenericConfig.SESSION_UID, i));
+			FileRemover.safeDelete(String.format("%s_%d.out.fa", temp + GenericConfig.SESSION_UID, i));
+			FileRemover.safeDelete(String.format("%s_%d.fa.log", temp + GenericConfig.SESSION_UID, i));
 		}
 	}
 	

@@ -15,9 +15,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.apache.commons.io.FileUtils;
-
 import leb.util.seq.Blast6FormatHitDomain;
+import leb.util.common.FileRemover;
 import leb.util.common.Prompt;
 import leb.util.config.GenericConfig;
 import leb.wrapper.DiamondWrapper;
@@ -271,64 +270,18 @@ public class ProcCalcPairwiseAAI {
 
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			(new File(faa1 + ".pin")).delete();
-			(new File(faa1 + ".phr")).delete();
-			(new File(faa1 + ".psq")).delete();
-			(new File(faa2 + ".pin")).delete();
-			(new File(faa2 + ".phr")).delete();
-			(new File(faa2 + ".psq")).delete();
+			FileRemover.safeDelete(faa1 + ".pin");
+			FileRemover.safeDelete(faa1 + ".phr");
+			FileRemover.safeDelete(faa1 + ".psq");
+			FileRemover.safeDelete(faa2 + ".pin");
+			FileRemover.safeDelete(faa2 + ".phr");
+			FileRemover.safeDelete(faa2 + ".psq");
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
 		return calcIdentityWithDetails(hits_vice, hits_versa, lengthMap, nameMap1, nameMap2, nameList1, nameList2);
 	}
-/*	
-	private double pairwiseUsearch(String faa1, String faa2) throws IOException {
-		// Read sequence lengths
-		BufferedReader 	br1 = new BufferedReader(new FileReader(faa1)),
-						br2 = new BufferedReader(new FileReader(faa2));
-		Map<String, Integer> lengthMap = new HashMap<String, Integer>();
-		Map<String, Integer> nameMap1  = new HashMap<String, Integer>(),
-							 nameMap2  = new HashMap<String, Integer>();
-				
-		mapLength(br1, br2, lengthMap, nameMap1, nameMap2);
-		br1.close(); br2.close();
-		
-		// Run pairwise USEARCH
-		Prompt.print("Preparing to run reciprocal USEARCH...");
-		ProcFuncAnnoByUSearch procUsearch = new ProcFuncAnnoByUSearch();
-		procUsearch.setEvalue(.1);
-		procUsearch.setThreads(nthread);
-		procUsearch.setUsearchVersion(10);
-		procUsearch.executeMakeUdbUsearch(faa1, faa1 + ".udb", GenericConfig.VERB);
-		procUsearch.executeMakeUdbUsearch(faa2, faa2 + ".udb", GenericConfig.VERB);
-		
-		Prompt.print(String.format("Running USEARCH... (%s vs. %s)", faa1, faa2));
-		procUsearch.setDbFileName(faa1 + ".udb");
-		procUsearch.setOutFileName(faa1 + ".b6");
-		procUsearch.setIdentity(.1);
-		List<Blast6FormatHitDomain> hits_vice  = procUsearch.executeUsearchGlobal(faa2, GenericConfig.VERB);
-		
-		Prompt.print(String.format("Running USEARCH... (%s vs. %s)", faa2, faa1));
-		procUsearch.setDbFileName(faa2 + ".udb");
-		procUsearch.setOutFileName(faa2 + ".b6");
-		procUsearch.setIdentity(.1);
-		List<Blast6FormatHitDomain> hits_versa = procUsearch.executeUsearchGlobal(faa1, GenericConfig.VERB);
-		
-		// Clean up stubs
-		if(!GenericConfig.KEEP) {
-			if(!BENCH) (new File(faa1)).delete();
-			(new File(faa1 + ".udb")).delete();
-			(new File(faa1 + ".b6")).delete();
-			if(!BENCH) (new File(faa2)).delete();
-			(new File(faa2 + ".udb")).delete();
-			(new File(faa2 + ".b6")).delete();
-		}
-		
-		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
-		return calcIdentity(hits_vice, hits_versa, lengthMap, nameMap1, nameMap2);
-	}
-*/	
+
 	private List<String> pairwiseMmseqs(String faa1, String faa2) throws IOException {
 		// Read sequence lengths
 		BufferedReader 	br1 = new BufferedReader(new FileReader(faa1)),
@@ -395,8 +348,8 @@ public class ProcCalcPairwiseAAI {
 		
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			FileUtils.deleteDirectory(new File(globaltmp + File.separator + GenericConfig.SESSION_UID + "_MM"));
-			FileUtils.deleteDirectory(new File(globaltmp + File.separator + GenericConfig.SESSION_UID + "_tmp"));
+			FileRemover.safeDeleteDirectory(globaltmp + File.separator + GenericConfig.SESSION_UID + "_MM");
+			FileRemover.safeDeleteDirectory(globaltmp + File.separator + GenericConfig.SESSION_UID + "_tmp");
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
@@ -445,8 +398,7 @@ public class ProcCalcPairwiseAAI {
 		
 		// Clean up stubs
 		if(!GenericConfig.KEEP) {
-			FileUtils.deleteDirectory(new File(globaltmp + File.separator + GenericConfig.SESSION_UID + "_DM"));
-		//	FileUtils.deleteDirectory(TMPDIR + GenericConfig.SESSION_UID + "_tmp");
+			FileRemover.safeDeleteDirectory(globaltmp + File.separator + GenericConfig.SESSION_UID + "_DM");
 		}
 		
 		// Collect pairs with reciprocal hits with id 40%+, q_cov 50%+
