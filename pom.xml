@@ -49,20 +49,17 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.10</version>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <assembleDirectory>${project.build.directory}</assembleDirectory>
-                    <programs>
-                        <program>
+                    <archive>
+                        <manifest>
                             <mainClass>leb.main.EzAAI</mainClass>
-                            <platforms>
-                                <platform>unix</platform>
-                            </platforms>
-                            <id>ezaai</id>
-                        </program>
-                    </programs>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
             </plugin>
         </plugins>

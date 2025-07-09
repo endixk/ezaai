@@ -26,4 +26,7 @@ jobs:
         distribution: ${{matrix.dist}}
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B compile --file pom.xml assembly:single
+
+    - name: Run test
+      run: java -jar target/EzAAI-*.jar -h
