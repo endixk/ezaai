@@ -16,6 +16,17 @@ conda install -c bioconda -y ezaai
 ezaai -h
 ~~~
 
+### Build from source
+#### Requirements
+   * Java 8+
+   * Maven 3+
+~~~bash
+git clone https://github.com/endixk/ezaai.git
+cd ezaai
+mvn clean compile assembly:single
+java -jar target/EzAAI-*.jar -h
+~~~
+
 ## Available modules
 ### `extract`
  * Extract protein database from genome using Prodigal
