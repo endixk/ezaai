@@ -30,13 +30,13 @@ public class Prompt {
 		print(GenericConfig.PHEAD, message);
 	}
 	public static void talk(String head, String message) {
-		if(GenericConfig.VERB & !GenericConfig.QUIET) print_univ(head, message, 'c');
+		if(GenericConfig.VERB) print_univ(head, message, 'c');
 	}
 	public static void talk(String message) {
 		talk(GenericConfig.PHEAD, message);
 	}
 	public static void debug(String head, String message) {
-		if(GenericConfig.DEV & !GenericConfig.QUIET) print_univ(head, message, 'G');
+		if(GenericConfig.DEV) print_univ(head, message, 'G');
 	}
 	public static void debug(String message) { 
 		debug("DEV", message);
