@@ -194,7 +194,7 @@ public class EzAAI {
 				thread = Integer.parseInt(arg.get("-t"));
 				if(thread > 1 && !batchExtract) multithread = true;
 			}
-			else thread = 1;
+			else thread = batchExtract ? 10 : 1;
 		}
 		if(module == MODULE_CALCULATE) {
 			if(arg.get("-p") != null) {
