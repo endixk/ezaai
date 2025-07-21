@@ -6,6 +6,8 @@ import leb.wrapper.ProdigalWrapper;
 
 public class ProcCDSPredictionByProdigal {
 
+	private String command = null;
+
 	private String outDir = "/tmp/ezaai";
 	
 	private String prodigalPath = "prodigal";
@@ -43,11 +45,6 @@ public class ProcCDSPredictionByProdigal {
 		File dir = new File(outDir);
 		if(!dir.exists()) dir.mkdirs();
 
-//	    gffOutFileName = outDir + File.separator + "prodigal.gff";
-//	    faaOutFileName = outDir + File.separator + "prodigal.faa";	    
-//	    ffnOutFileName = outDir + File.separator + "prodigal.ffn";
-		
-		//System.out.println("Execution of Prodigal will be started");
 		ProdigalWrapper prodigal = new ProdigalWrapper(prodigalPath);
 		
 		prodigal.setInputFileName(seqFileName);
@@ -68,6 +65,15 @@ public class ProcCDSPredictionByProdigal {
 		int transl_table = 11;
 		prodigal.setTranslationTable(transl_table);
 		prodigal.run();
-		
-	}//method end
+
+		command = prodigal.getCommandLine();
+	}
+
+	public String getCommand() {
+		if(command == null) {
+			throw new IllegalStateException("Command has not been executed yet.");
+		} else {
+			return command;
+		}
+	}
 }

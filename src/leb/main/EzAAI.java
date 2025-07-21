@@ -149,21 +149,19 @@ public class EzAAI {
 				}
 			}
 		}
-		if(arg.get("-tmp") != null) {
-			tmp = arg.get("-tmp");
-			if((new File(tmp)).exists()) {
-				if(!(new File(tmp)).isDirectory()) {
-					Prompt.error("Invalid temporary directory given: " + tmp);
-					return -1;
-				}
-				else Prompt.talk("Using existing temporary directory: " + tmp);
+		if(arg.get("-tmp") != null) tmp = arg.get("-tmp");
+		if((new File(tmp)).exists()) {
+			if(!(new File(tmp)).isDirectory()) {
+				Prompt.error("Invalid temporary directory given: " + tmp);
+				return -1;
 			}
+			else Prompt.talk("Using existing temporary directory: " + tmp);
+		}
+		else {
+			if((new File(tmp)).mkdirs()) Prompt.talk("Created temporary directory: " + tmp);
 			else {
-				if((new File(tmp)).mkdirs()) Prompt.talk("Created temporary directory: " + tmp);
-				else {
-					Prompt.error("Failed to create temporary directory: " + tmp);
-					return -1;
-				}
+				Prompt.error("Failed to create temporary directory: " + tmp);
+				return -1;
 			}
 		}
 		if(!(new File(tmp)).canWrite()) {
@@ -377,6 +375,7 @@ public class EzAAI {
 		
 		try {
 			Prompt.print("Running prodigal on genome " + input1 + "...");
+			String command = null;
 			if(multithread) {
 				ProcParallelProdigal procProdigal = new ProcParallelProdigal(input1, faaFile, tmp + File.separator, path_ufasta, path_prodigal, thread);
 				if(procProdigal.run() < 0) return -1;
@@ -389,7 +388,30 @@ public class EzAAI {
 				procProdigal.setFaaOutFileName(faaFile);
 				procProdigal.setFfnOutFileName(ffnFile);
 				procProdigal.execute(input1, GenericConfig.DEV);
+				command = procProdigal.getCommand();
 			}
+
+			// check prodigal output
+			if(!(new File(faaFile)).exists()) {
+				Prompt.error("Prodigal failed to produce output file: " + faaFile);
+				if(command != null) Prompt.error("Failed command: " + command);
+				Prompt.error("Please check if Prodigal is installed and the path is correct.");
+				return -1;
+			} else if((new File(faaFile)).length() == 0) {
+				Prompt.error("Prodigal produced an empty output file: " + faaFile);
+				if(command != null) Prompt.error("Failed command: " + command);
+				return -1;
+			} else {
+				BufferedReader br = new BufferedReader(new FileReader(faaFile));
+				String firstLine = br.readLine();
+				br.close();
+				if(!firstLine.startsWith(">")) {
+					Prompt.error("Prodigal produced an invalid output file: " + faaFile);
+					if(command != null) Prompt.error("Failed command: " + command);
+					return -1;
+				}
+			}
+
 			Prompt.talk("EzAAI", "Creating a submodule for converting .faa into .db...");
 			EzAAI convertModule = new EzAAI("convert");
 			String[] convertArgs = {"convert", "-i", faaFile, "-s", "prot", "-o", output, "-l", label, "-m", path_mmseqs, "-tmp", tmp};
@@ -437,6 +459,28 @@ public class EzAAI {
 					procProdigal.setFaaOutFileName(faaFile);
 					procProdigal.setFfnOutFileName(ffnFile);
 					procProdigal.execute(input, GenericConfig.DEV);
+
+					// check prodigal output
+					String command = procProdigal.getCommand();
+					if(!(new File(faaFile)).exists()) {
+						Prompt.error("Prodigal failed to produce output file: " + faaFile);
+						if(command != null) Prompt.error("Failed command: " + command);
+						Prompt.error("Please check if Prodigal is installed and the path is correct.");
+						return -1;
+					} else if((new File(faaFile)).length() == 0) {
+						Prompt.error("Prodigal produced an empty output file: " + faaFile);
+						if(command != null) Prompt.error("Failed command: " + command);
+						return -1;
+					} else {
+						BufferedReader br = new BufferedReader(new FileReader(faaFile));
+						String firstLine = br.readLine();
+						br.close();
+						if(!firstLine.startsWith(">")) {
+							Prompt.error("Prodigal produced an invalid output file: " + faaFile);
+							if(command != null) Prompt.error("Failed command: " + command);
+							return -1;
+						}
+					}
 				} catch(Exception e) {
 					e.printStackTrace();
 					return -1;

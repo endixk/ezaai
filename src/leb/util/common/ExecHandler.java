@@ -25,7 +25,7 @@ public abstract class ExecHandler {
 		argMap.put(val, "");
 	}
 	
-	protected String getCommandLine() {
+	public String getCommandLine() {
 		StringBuilder cmd = new StringBuilder(job);
 		for(String arg : args) {
 			cmd.append(" ").append(arg).append(argMap.get(arg));
