@@ -417,9 +417,9 @@ public class EzAAI {
 			String[] convertArgs = {"convert", "-i", faaFile, "-s", "prot", "-o", output, "-l", label, "-m", path_mmseqs, "-tmp", tmp};
 			if(convertModule.run(convertArgs) < 0) return -1;
 
-			FileRemover.safeDelete(gffFile);
+			if(!multithread) FileRemover.safeDelete(gffFile);
 			FileRemover.safeDelete(faaFile);
-			FileRemover.safeDelete(ffnFile);
+			if(!multithread) FileRemover.safeDelete(ffnFile);
 		} catch(Exception e) {
 			e.printStackTrace();
 			return -1;
