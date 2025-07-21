@@ -932,7 +932,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper("\n Please cite:\n", 'C') + CITATION);
 			System.out.println();
 			
-			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar <module> [<args>]");
+			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " ezaai <module> [<args>]");
 			System.out.println();
 
 			String indent = String.valueOf(15);
@@ -956,24 +956,42 @@ public class EzAAI {
 		}
 		if(module == MODULE_EXTRACT) {
 			System.out.println(ANSIHandler.wrapper("\n EzAAI - extract", 'G'));
-			System.out.println(ANSIHandler.wrapper(" Extract protein DB from prokaryotic genome sequence using Prodigal", 'g'));
+			System.out.println(ANSIHandler.wrapper(" Extract protein DB from prokaryotic genome sequence(s) using Prodigal", 'g'));
 			System.out.println();
 		
-			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar extract -i <IN_SEQ> -o <OUT_DB> [-l <LABEL> -t <THREAD>]");
+			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " ezaai extract -i <INPUT> -o <OUTPUT> [-l <LABEL> -t <THREAD>]");
 			System.out.println();
 
 			String indent = String.valueOf(15);
 			System.out.println(ANSIHandler.wrapper("\n Required options", 'Y'));
+			System.out.printf(" %-"+indent+"s%n", "SINGLE MODE");
 			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
 			System.out.printf(" %-"+indent+"s%s%n", "-i", "Input prokaryotic genome sequence");
 			System.out.printf(" %-"+indent+"s%s%n", "-o", "Output protein database");
-			
+			System.out.println();
+
+			System.out.printf(" %-"+indent+"s%n", "BATCH MODE");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-i", "Input directory with prokaryotic genome sequences");
+			System.out.printf(" %-"+indent+"s%s%n", "-o", "Output directory for protein databases");
 			System.out.println();
 			
 			System.out.println(ANSIHandler.wrapper("\n Additional options", 'y'));
+			System.out.printf(" %-"+indent+"s%n", "SINGLE MODE");
 			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
 			System.out.printf(" %-"+indent+"s%s%n", "-l", "Taxonomic label for phylogenetic tree");
 			System.out.printf(" %-"+indent+"s%s%n", "-t", "Number of CPU threads - multi-threading requires ufasta (default: 1)");
+			System.out.println();
+
+			System.out.printf(" %-"+indent+"s%n", "BATCH MODE");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
+			System.out.printf(" %-"+indent+"s%s%n", "-l", "Tab separated file with labels");
+			System.out.printf(" %-"+indent+"s%s%n", "",   "(FILE_NAME <tab> LABEL, default: use file names as labels)");
+			System.out.printf(" %-"+indent+"s%s%n", "-t", "Number of CPU threads to use (default: 10)");
+			System.out.println();
+
+			System.out.printf(" %-"+indent+"s%n", "COMMON");
+			System.out.println(ANSIHandler.wrapper(String.format(" %-"+indent+"s%s", "Argument", "Description"), 'c'));
 			System.out.printf(" %-"+indent+"s%s%n", "-tmp", "Custom temporary directory (default: /tmp/ezaai)");
 			//System.out.println(String.format(" %s\t\t%s", "  ", "https://github.com/gmarcais/ufasta"));
 			System.out.printf(" %-"+indent+"s%s%n", "-prodigal", "Custom path to prodigal binary (default: prodigal)");
@@ -986,7 +1004,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Convert CDS FASTA file into protein DB", 'g'));
 			System.out.println();
 		
-			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB> [-l <LABEL>]");
+			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " ezaai convert -i <IN_CDS> -s <SEQ_TYPE> -o <OUT_DB> [-l <LABEL>]");
 			System.out.println();
 
 			String indent = String.valueOf(15);
@@ -1009,7 +1027,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Calculate AAI value from protein databases", 'g'));
 			System.out.println();
 		
-			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT> [-p <PROGRAM> -t <THREAD> -id <IDENTITY> -cov <COVERAGE> -mtx <MTX_OUTPUT>]");
+			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " ezaai calculate -i <INPUT_1> -j <INPUT_2> -o <OUTPUT> [-p <PROGRAM> -t <THREAD> -id <IDENTITY> -cov <COVERAGE> -mtx <MTX_OUTPUT>]");
 			System.out.println();
 
 			String indent = String.valueOf(15);
@@ -1041,7 +1059,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Hierarchical clustering of taxa with AAI values", 'g'));
 			System.out.println();
 		
-			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar cluster -i <AAI_TABLE> -o <OUTPUT>");
+			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " ezaai cluster -i <AAI_TABLE> -o <OUTPUT>");
 			System.out.println();
 
 			String indent = String.valueOf(15);
@@ -1057,7 +1075,7 @@ public class EzAAI {
 			System.out.println(ANSIHandler.wrapper(" Convert protein DB into FASTA file", 'g'));
 			System.out.println();
 
-			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " java -jar EzAAI.jar convertdb -i <IN_DB> -o <OUT_FA>");
+			System.out.println(ANSIHandler.wrapper("\n USAGE:", 'Y') + " ezaai convertdb -i <IN_DB> -o <OUT_FA>");
 			System.out.println();
 
 			String indent = String.valueOf(15);
