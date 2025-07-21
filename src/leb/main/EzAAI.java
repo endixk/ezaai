@@ -134,6 +134,20 @@ public class EzAAI {
 					return -1;
 				}
 			}
+			// check output directory is writable
+			if((new File(output)).isDirectory()) {
+				if(!(new File(output)).canWrite()) {
+					Prompt.error("Output directory is not writable: " + output);
+					return -1;
+				}
+			} else {
+				String path = new File(output).getAbsolutePath();
+				String parent = path.substring(0, path.lastIndexOf(File.separator));
+				if(!(new File(parent)).canWrite()) {
+					Prompt.error("Output file is allocated to a non-writable directory: " + parent);
+					return -1;
+				}
+			}
 		}
 		if(arg.get("-tmp") != null) {
 			tmp = arg.get("-tmp");
@@ -151,6 +165,11 @@ public class EzAAI {
 					return -1;
 				}
 			}
+		}
+		if(!(new File(tmp)).canWrite()) {
+			Prompt.error("Temporary directory is not writable: " + tmp);
+			Prompt.error("Please provide a writable directory with -tmp argument.");
+			return -1;
 		}
 		
 		if(module == MODULE_CONVERT) {
