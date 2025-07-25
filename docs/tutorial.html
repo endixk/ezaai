@@ -285,7 +285,7 @@
 		$(document).ready(function() {
 			var pname = window.location.pathname;
 			var phead = '/ezaai';
-			if(pname.split('/').length > 3){
+			if(pname.split('/').length > 2){
 				phead = phead + '/' + pname.split('/')[2];
 			}
 			$('.navbar-nav > li > a[href="'+ phead +'"]').parent().addClass('active');
