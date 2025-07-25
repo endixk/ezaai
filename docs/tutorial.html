@@ -27,8 +27,6 @@
 	src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
 	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 	crossorigin="anonymous"></script>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9B3HSS9PWF"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -276,7 +274,7 @@
 					<li class="nav-item"><a class="nav-link" href="/ezaai">Home</a></li>
 					<li class="nav-item"><a class="nav-link" href="/ezaai/tutorial">Tutorial</a></li>
 					<li class="nav-item"><a class="nav-link" href="/ezaai/download">Download</a></li>
-					<li class="nav-item"><a class="nav-link" href="https://github.com/lebsnu/ezaai" target="_blank" rel="noopener noreferrer"><i class="fa fa-github"></i> GitHub</a></li>
+					<li class="nav-item"><a class="nav-link" href="https://github.com/endixk/ezaai" target="_blank" rel="noopener noreferrer"><i class="fa fa-github"></i> GitHub</a></li>
 					<li class="nav-item"><a class="nav-link" href="/ezaai/data">Data</a></li>
 					<li class="nav-item"><a class="nav-link" href="/ezaai/citation">Cite us</a></li>
 				</ul>
@@ -287,7 +285,7 @@
 		$(document).ready(function() {
 			var pname = window.location.pathname;
 			var phead = '/ezaai';
-			if(pname.split('/').length > 2){
+			if(pname.split('/').length > 3){
 				phead = phead + '/' + pname.split('/')[2];
 			}
 			$('.navbar-nav > li > a[href="'+ phead +'"]').parent().addClass('active');

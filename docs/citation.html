@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cite EzAAI</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<link rel="shortcut icon" href="images/ezaai_logowork-16px.ico" type="image/x-icon">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+	crossorigin="anonymous"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+	crossorigin="anonymous"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-9B3HSS9PWF');
+</script>
+<meta charset="EUC-KR">
+</head>
+<body style="padding-left:0;padding-right:0" class="jumbotron">
+	<section>
+	<div class="container" style="padding-top:5rem">
+		<img src="images/ezaai_banner.svg" style="max-width:50%;margin-left:auto;margin-right:auto;height:auto;width:auto;display:block">
+		<p><br><br></p>
+		<p><b>Kim, D., Park, S. &amp; Chun, J.</b> Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity.
+			 <i>J. Microbiol </i><b>59</b>, 476-480 (2021). 
+			<a href="https://doi.org/10.1007/s12275-021-1154-0" target="_blank" rel="noopener"><img style="height:20px" src="https://link.springer.com/oscar-static/images/springerlink/svg/springerlink-6c9a864b59.svg"></a></p>
+		</div>
+	</section>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/ezaai"><img src="images/ezaai_logowork-160px.svg" width="30"> EzAAI</a>
+			</div>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarsExampleDefault"
+				aria-controls="navbarsExampleDefault" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="/ezaai">Home</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/tutorial">Tutorial</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/download">Download</a></li>
+					<li class="nav-item"><a class="nav-link" href="https://github.com/endixk/ezaai" target="_blank" rel="noopener noreferrer"><i class="fa fa-github"></i> GitHub</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/data">Data</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/citation">Cite us</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<script>
+		$(document).ready(function() {
+			var pname = window.location.pathname;
+			var phead = '/ezaai';
+			if(pname.split('/').length > 2){
+				phead = phead + '/' + pname.split('/')[2];
+			}
+			$('.navbar-nav > li > a[href="'+ phead +'"]').parent().addClass('active');
+		})
+	</script>
+	<footer class="footer align-middle" style="padding:0 0;z-index:5">
+		<p style="height:3rem; margin-top:1rem!important">&copy; <a class="a-footer" href="http://leb.snu.ac.kr/" target="_blank" rel="noopener noreferrer">Laboratory of Evolutionary Bioinformatics</a>, Seoul
+			National University. 2021-</p>
+	</footer>
+</body>
+</html>
