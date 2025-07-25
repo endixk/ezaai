@@ -124,7 +124,6 @@ p{
 }*/
 
 .footer{
-  position: fixed;
   left: 0;
   bottom: 0;
   height: 3rem;
@@ -135,6 +134,10 @@ p{
   color: white;
   background: rgb(138, 138, 146);
   font-size: 0.8rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .a-footer{
