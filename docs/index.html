@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EzAAI - Home</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<link rel="shortcut icon" href="/ezaai/image/ezaai_logowork-16px.ico" type="image/x-icon">
+<link rel="stylesheet" href="/ubcg2/css/style.css">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+	crossorigin="anonymous"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+	crossorigin="anonymous"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-9B3HSS9PWF');
+</script>
+<meta charset="EUC-KR">
+<style>
+	.inline-code {
+		font-size:85%;
+		font-family:SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;
+	}
+</style>
+</head>
+<body style="padding-left:0;padding-right:0">
+	<section>
+		<div class="jumbotron">
+			<div class="container">
+			<img src="/ezaai/image/ezaai_banner.svg" style="max-width:50%;margin-left:auto;margin-right:auto;height:auto;width:auto;display:block">
+			<!-- 
+			<h1 class="text-center" style="font-size:4rem">EzAAI</h1>
+			</div>
+				
+				<h6 class="text-center" style="font-family:serif"><em>A Pipeline for High Throughput Calculation of Prokaryotic Average Amino Acid Identity</em></h6>-->
+			</div>
+		</div>
+		<div class="container p1" style="margin-bottom:5rem">
+			<h3 class="text-center" style="font-family:serif"><em>Introduction</em></h3>
+			<hr>
+			<div class="row">
+				<div class="col-10">
+					<p>EzAAI is a suite of workflows for improved AAI calculation performance along with the novel module that provides hierarchical clustering analysis.</p>
+					<a class="btn btn-outline-primary" href="/ezaai/tutorial" role="button" style="display:inline; margin-right:1rem">
+					<i class="fa fa-play-circle-o"></i> Tutorial</a>
+					<a class="btn btn-outline-primary" href="/ezaai/download" role="button" style="display:inline; margin-right:1rem">
+					<i class="fa fa-download"></i> Download</a>
+					<a class="btn btn-outline-primary" href="https://github.com/lebsnu/ezaai" target="_blank" rel="noopener noreferrer" role="button" style="display:inline; margin-right:1rem">
+					<i class="fa fa-github"></i> GitHub</a>
+					<a class="btn btn-outline-primary" href="/ezaai/citation" role="button" style="display:inline; margin-right:1rem">
+					<i class="fa fa-quote-right"></i> Cite us</a>
+				</div>
+				
+			</div>
+		</div>
+		<div class="container p1" style="margin-bottom:5rem">
+			<h3 class="text-center" style="font-family:serif"><em>Available modules</em></h3>
+			<hr>
+			
+			<div class="row">
+				<div class="col-6">
+					<h3>Extract</h3>
+					<p><i class="fa fa-check-square-o" style="margin-right:5px"></i>  Extracts profile DB from genome using <span class="inline-code">Prodigal</span></p>
+					<p>
+						<i class="fa fa-code" style="margin-right:5px"></i>
+						<span class="inline-code">
+							ezaai extract -i &#60;IN&#62; -o &#60;OUT&#62;
+						</span>
+					</p>
+					<table class="table table-sm">
+						<thead class="thead-light">
+							<tr>
+								<th style="width:30%;">Argument</th>
+								<th style="width:70%">Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="inline-code">-i</td>
+								<td>Input bacterial genome sequence</td>
+							</tr>
+							<tr>
+								<td class="inline-code">-o</td>
+								<td>Output profile database</td>
+							</tr>
+					</tbody>
+				</table>
+				</div>
+				<div class="col-6">
+					<h3>Convert</h3>
+					<p><i class="fa fa-check-square-o" style="margin-right:5px"></i>  Converts CDS FASTA file into profile DB</p>
+					<p>
+						<i class="fa fa-code" style="margin-right:5px"></i>
+						<span class="inline-code">ezaai convert -i &#60;IN&#62; -s &#60;SEQ&#62; -o &#60;OUT&#62;</span>
+					</p>
+					<table class="table table-sm">
+						<thead class="thead-light">
+							<tr>
+								<th style="width:30%;">Argument</th>
+								<th style="width:70%">Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="inline-code">-i</td>
+								<td>Input CDS profile (FASTA format)</td>
+							</tr>
+							<tr>
+								<td class="inline-code">-s</td>
+								<td>Sequence type of input file (nucl/prot)</td>
+							</tr>
+							<tr>
+								<td class="inline-code">-o</td>
+								<td>Output profile DB</td>
+							</tr>
+					</tbody>
+				</table>
+				</div>
+			</div>
+			<div class="row" style="margin-top:1rem">
+				<div class="col-6">
+					<h3>Calculate</h3>
+					<p><i class="fa fa-check-square-o" style="margin-right:5px"></i>  Calculate AAI value from profile databases using MMseqs2</p>
+					<p>
+						<i class="fa fa-code" style="margin-right:5px"></i>
+						<span class="inline-code">
+							ezaai calculate -i &#60;IN_1&#62; -j &#60;IN_2&#62; -o &#60;OUT&#62;
+						</span>
+					</p>
+					<table class="table table-sm">
+						<thead class="thead-light">
+							<tr>
+								<th style="width:30%;">Argument</th>
+								<th style="width:70%">Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="inline-code">-i</td>
+								<td>First input profile DB / directory with profile DBs</td>
+							</tr>
+							<tr>
+								<td class="inline-code">-j</td>
+								<td>Second input profile DB / directory with profile DBs</td>
+							</tr>
+							<tr>
+								<td class="inline-code">-o</td>
+								<td>Output result file</td>
+							</tr>
+					</tbody>
+				</table>
+				</div>
+				<div class="col-6">
+					<h3>Cluster</h3>
+					<p><i class="fa fa-check-square-o" style="margin-right:5px"></i>  Hierarchical clustering of taxa with AAI values</p>
+					<p>
+						<i class="fa fa-code" style="margin-right:5px"></i>
+						<span class="inline-code">
+							ezaai cluster -i &#60;IN&#62; -o &#60;OUT&#62;
+						</span>
+					</p>
+					<table class="table table-sm">
+						<thead class="thead-light">
+							<tr>
+								<th style="width:30%;">Argument</th>
+								<th style="width:70%">Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="inline-code">-i</td>
+								<td>Input EzAAI result file containing all-by-all pairwise AAI values</td>
+							</tr>
+							<tr>
+								<td class="inline-code">-o</td>
+								<td>Output result file</td>
+							</tr>
+					</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+		<div class="container p1" style="margin-bottom:5rem">
+			<h2 style="margin-top:2rem;margin-bottom:1rem;text-align:center;font-family:serif"><em>EzAAI TEAM</em></h2>
+		<div class="row" style="text-align: center">
+			<div class="col-md-8">
+				<div class="border-bottom" style="padding-left:1rem;padding-right:1rem">
+					<h3>Contributors</h3>
+				</div>
+			</div>
+			
+			<div class="col-md-4">
+				<div class="border-bottom" style="padding-left:1rem;padding-right:1rem">
+					<h3>CA <a href="mailto:jchun@snu.ac.kr" target="_top" style="color:black"><i class="fa fa-envelope-o" style="font-size:70%"></i></a></h3>
+				</div>
+			</div>
+		</div>
+		<div class="row" style="text-align: center;">
+			<div class="col-md-4">
+				<div style="margin:1rem 1rem">
+					<div class="profile_image">
+						<img src="/homepage/images/team/DWkim.jpg" style="width:150px">
+					</div>
+					<h5>Dongwook Kim<sup style="font-size:60%">1</sup></h5>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div style="margin:1rem 1rem">
+					<div class="profile_image">
+						<img src="/homepage/images/team/sein.jpg" style="width:150px">
+					</div>
+					<h5>Sein Park<sup style="font-size:60%">1</sup></h5>
+				</div>
+			</div>	
+			<div class="col-md-4">
+				<div style="margin:1rem 1rem">
+					<div class="profile_image">
+						<img src="/ezaai/image/jon.jpg" style="width:150px">
+					</div>
+					<h5>Jon Jongsik Chun<sup style="font-size:60%">1,2,3</sup></h5>
+				</div>
+			</div>
+		</div>
+		<div style="margin-bottom:3rem">
+			<p style="margin-top:0!important;margin-bottom:0;font-size:80%"><sup>1 </sup>Interdisciplinary Program in Bioinformatics, Seoul National University, Seoul 00826, Republic of Korea</p>
+			<p style="margin-top:0!important;margin-bottom:0;font-size:80%"><sup>2 </sup>Institute of Molecular Biology and Genetics, Seoul National University, Seoul 00826, Republic of Korea</p>
+			<p style="margin-top:0!important;margin-bottom:0;font-size:80%"><sup>3 </sup>School of Biological Sciences, Seoul National University, Seoul 00826, Republic of Korea</p>
+    	</div>
+		</div>
+		
+	</section>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/ezaai"><img src="/ezaai/image/ezaai_logowork-160px.svg" width="30"> EzAAI</a>
+			</div>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarsExampleDefault"
+				aria-controls="navbarsExampleDefault" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="/ezaai">Home</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/tutorial">Tutorial</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/download">Download</a></li>
+					<li class="nav-item"><a class="nav-link" href="https://github.com/lebsnu/ezaai" target="_blank" rel="noopener noreferrer"><i class="fa fa-github"></i> GitHub</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/data">Data</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/citation">Cite us</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<script>
+		$(document).ready(function() {
+			var pname = window.location.pathname;
+			var phead = '/ezaai';
+			if(pname.split('/').length > 2){
+				phead = phead + '/' + pname.split('/')[2];
+			}
+			$('.navbar-nav > li > a[href="'+ phead +'"]').parent().addClass('active');
+		})
+	</script>
+	<footer class="footer align-middle" style="padding:0 0;z-index:5">
+		<p style="height:3rem; margin-top:1rem!important">&copy; <a class="a-footer" href="http://leb.snu.ac.kr/" target="_blank" rel="noopener noreferrer">Laboratory of Evolutionary Bioinformatics</a>, Seoul
+			National University. 2021-</p>
+	</footer>
+</body>
+</html>
