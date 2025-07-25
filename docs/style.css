@@ -1,14 +1,20 @@
-html{
+html, body {
   height: 100%;
+  margin: 0;
 }
 
 body {
   overflow:auto;
-  height: 100%;
-  padding: 50px;
   font: 14px;
   min-width: 200px;
   min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+section {
+  flex: 1;
 }
 
 .navbar-nav > li{
@@ -124,20 +130,16 @@ p{
 }*/
 
 .footer{
-  left: 0;
-  bottom: 0;
-  height: 3rem;
   width: 100%;
-  padding: 5px 0;
+  height: 3rem;
   text-align: center;
-  vertical-align: middle;
   color: white;
   background: rgb(138, 138, 146);
   font-size: 0.8rem;
-
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: auto;
 }
 
 .a-footer{
@@ -152,7 +154,8 @@ p{
 }
 
 .body_section{
-	margin: 2rem;
+  padding: 5rem 2rem 2rem 2rem;
+  flex: 1;
 }
 
 .active{
