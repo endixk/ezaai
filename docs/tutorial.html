@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EzAAI - tutorial</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<link rel="shortcut icon" href="images/ezaai_logowork-16px.ico" type="image/x-icon">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+	crossorigin="anonymous"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+	crossorigin="anonymous"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9B3HSS9PWF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-9B3HSS9PWF');
+</script>
+<meta charset="EUC-KR">
+<style>
+	.bd-sidebar{
+		border-left: 1px solid rgba(0,0,0,.1);
+		position:fixed;
+		max-width:20%;
+		top:6rem;right:0;
+	}
+	.bd-sidebar .nav > li > a {
+		display: inline-block;
+		width:15vw;
+		padding: .25rem 1.25rem;
+		@include font-size(90%);
+		color: rgba(0, 0, 0, .65);
+	}
+	.bd-sidebar .nav > li > a:hover {
+		color: rgba(0, 0, 0, .85);
+		text-decoration: none;
+		background-color: transparent;
+	}
+	.btn-ufcg {
+    	margin: 0 0;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    	padding: 0 0;
+    	margin-top: 2px;
+    	float: right;
+    	height: 20px;
+    	line-height: 0.9;
+	}
+	.infobox {
+		margin-bottom: 0rem;
+	}
+	.infoheader{
+		padding-top: 3.5rem;
+	}
+	.highlight {
+		padding: 1rem;
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+		background-color: #eeeeee;
+		border-radius: 10px;
+	}
+	.plast {
+		margin-bottom:1.5rem;
+	}
+	.inline-code{
+		font-size:85%;
+		font-family:SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;
+	}
+	code {
+		border: solid 1px #e4e4e4;
+		padding: 4px 4px 1px;
+		background: #f5f7f8;
+		/*color: #3a3a3a;*/
+		border-radius: 3px;
+	}
+	pre {
+		margin-bottom:0;
+	}
+	p {
+		margin-top:0.5rem!important;
+		margin-bottom:0.5rem;
+	}
+	h5 {
+		margin-top:2rem;
+	}
+	hr {
+		border-color:#aaa;
+	}
+</style>
+</head>
+<body style="padding-top:0">
+	<section>
+		<div class="container p1"><div class="row">
+			<div class="col-md-10">
+				<div class="infobox">
+					<h1 class="infoheader">EzAAI Tutorial</h1>
+					<h6>Follow this step-by-step guide with a small sample dataset to learn how to use EzAAI.</h6>
+				</div>
+				<div class="infobox">
+					<h1 id="sample" class="infoheader">Sample dataset</h1><hr>
+					<h5 style="margin-top:1rem!important">Sample species</h5>
+					<p class="plast">Six bacterial species under family <em style="font-family:serif">Microbacteriaceae</em> are prepared as a sample dataset.</p>
+					<table class="table table-sm" style="max-width:80%;margin-left:auto;margin-right:auto">
+						<thead class="thead-light">
+							<tr>
+								<th scope="col">Species</th>
+								<th scope="col">Accession</th>
+								<th scope="col">Link</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><em style="font-family:serif;font-weight:bold">Clavibacter nebraskensis</em> <span style="font-size:80%">NCPPB 2531</span></td>
+								<td><pre>GCA_000355695.1</pre></td>
+								<td><a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_000355695.1/" target="_blank" rel="noopener noreferer">NCBI <i class="fa fa-external-link"></i></a></td>
+							</tr>
+							<tr>
+								<td><em style="font-family:serif;font-weight:bold">Clavibacter insidiosus</em> <span style="font-size:80%">LMG 3663</span></td>
+								<td><pre>GCA_002240565.1</pre></td>
+								<td><a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_002240565.1/" target="_blank" rel="noopener noreferer">NCBI <i class="fa fa-external-link"></i></a></td>
+							</tr>
+							<tr>
+								<td><em style="font-family:serif;font-weight:bold">Microbacterium hominis</em> <span style="font-size:80%">NBRC 15708</span></td>
+								<td><pre>GCA_001592125.1</pre></td>
+								<td><a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_001592125.1/" target="_blank" rel="noopener noreferer">NCBI <i class="fa fa-external-link"></i></a></td>
+							</tr>
+							<tr>
+								<td><em style="font-family:serif;font-weight:bold">Microbacterium aurum</em> <span style="font-size:80%">KACC 15219</span></td>
+								<td><pre>GCA_001974985.1</pre></td>
+								<td><a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_001974985.1/" target="_blank" rel="noopener noreferer">NCBI <i class="fa fa-external-link"></i></a></td>
+							</tr>
+							<tr>
+								<td><em style="font-family:serif;font-weight:bold">Leucobacter chironomi</em> <span style="font-size:80%">DSM 19883</span></td>
+								<td><pre>GCA_000421845.1</pre></td>
+								<td><a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_000421845.1/" target="_blank" rel="noopener noreferer">NCBI <i class="fa fa-external-link"></i></a></td>
+							</tr>
+							<tr>
+								<td><em style="font-family:serif;font-weight:bold">Leucobacter muris</em> <span style="font-size:80%">DSM 101948</span></td>
+								<td><pre>GCA_004028235.1</pre></td>
+								<td><a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_004028235.1/" target="_blank" rel="noopener noreferer">NCBI <i class="fa fa-external-link"></i></a></td>
+							</tr>
+						</tbody>
+					</table>
+					<p>Press the button below to download a compressed file containing the genome assemblies of the species above.</p>
+					<p><i class="fa fa-download"></i> Download samples (4.9 MB) <a class="btn btn-secondary btn-ufcg" href="resources/EzAAI_samples.zip" role="button" rel="noopener noreferrer" style="float:none;margin-top:0;margin-bottom:2px"><span style="font-size:.7rem;padding:0 2px">EzAAI_samples.zip</span></a>
+				</div>
+				<div class="infobox">
+					<h1 id="extract" class="infoheader">EzAAI extract <span style="font-size:60%;font-weight:normal">- Extract profile DB from sequences</span></h1><hr>
+					<h5>Run EzAAI extract module</h5>
+					<p>Launch EzAAI extract module on your first genome by entering one of the following commands on your terminal.</p>
+					<figure class="highlight">
+						<pre><span style="color:#888888">$</span> <strong>ezaai extract -i fasta/Cn.fasta -o db/Cn.db -l "Clavibacter nebraskensis"</strong> <span style="color:#888888">// conda env</span></pre>
+						<hr>
+						<pre><span style="color:#888888">$</span> <strong>java -jar EzAAI.jar extract -i fasta/Cn.fasta -o db/Cn.db -l "Clavibacter nebraskensis"</strong> <span style="color:#888888">// runnable JAR</span></pre>
+					</figure>
+					<p>EzAAI will automatically produce a CDS profile DB of the genome with Prodigal with following prompt.</p>
+					<figure class="highlight">
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Running prodigal on genome fasta/Cn.fasta...</span></pre>
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Converting given CDS file into profile database... (fasta/Cn.fasta.faa -> db/Cn.db)</span></pre>
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Task finished.</span></pre>
+					</figure>
+					<p>Now enter the followings to run the same process on the other genomes provided.</p>
+					<figure class="highlight">
+						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Ci.fasta -o db/Ci.db -l "Clavibacter insidiosus"</pre>
+						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Mh.fasta -o db/Mh.db -l "Microbacterium hominis"</pre>
+						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Ma.fasta -o db/Ma.db -l "Microbacterium aurum"</pre>
+						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Lc.fasta -o db/Lc.db -l "Leucobacter chironomi"</pre>
+						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Lm.fasta -o db/Lm.db -l "Leucobacter muris"</pre>
+					</figure>
+					<hr>
+					<h5>Check results</h5>
+					<p>You can check the database files lying in the directory by entering the following command.</p>
+					<figure class="highlight">
+						<pre><span style="color:#888888">$</span> <strong>ls db/</strong><hr>Ci.db Cn.db Lc.db Lm.db Ma.db Mh.db</pre>
+					</figure>
+				</div>
+				<div class="infobox">
+					<h1 id="calculate" class="infoheader">EzAAI calculate <span style="font-size:60%;font-weight:normal">- calculate AAI value from profile DBs</span></h1><hr>
+					<h5>Run EzAAI calculate module</h5>
+					<p>Simply enter the following one-liner to perform all-by-all pairwise AAI calculation on the extracted profiles from above.</p>
+					<figure class="highlight">
+						<pre><span style="color:#888888">$</span> <strong>ezaai calculate -i db/ -j db/ -o out/aai.tsv</strong></pre>
+					</figure>
+					<p>The pipeline will automatically detect <span class="inline-code">.db</span> files from the directory and calculate AAI values across the entire set of pairs using MMSeqs2.</p>
+					<figure class="highlight">
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Calculating AAI... [Task 1/36]</span></pre>
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Calculating AAI... [Task 2/36]</span></pre>
+						<pre><strong>...</strong></pre>
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Calculating AAI... [Task 36/36]</span></pre>
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Task finished.</span></pre>
+					</figure>
+					<hr>
+					<h5>Check results</h5>
+					<p>Run following to peek the contents of the result file.</p>
+					<figure class="highlight">
+						<pre><span style="color:#888888">$</span> <strong>head -7 out/aai.tsv</strong></pre>
+						<hr>
+						<pre>ID1	ID2	Label1	Label2	AAI</pre>
+						<pre>786958951	786958951	Leucobacter muris	Leucobacter muris	100.000000</pre>
+						<pre>786958951	199206886	Leucobacter muris	Clavibacter nebraskensis	61.609688</pre>
+						<pre>786958951	334056981	Leucobacter muris	Microbacterium hominis	61.465138</pre>
+						<pre>786958951	204122518	Leucobacter muris	Microbacterium aurum	61.842079</pre>
+						<pre>786958951	1073644442	Leucobacter muris	Clavibacter insidiosus	61.453637</pre>
+						<pre>786958951	727401181	Leucobacter muris	Leucobacter chironomi	88.755422</pre>
+					</figure>
+					<p>You can see the result in glance of which the pair from same genus reports relatively high AAI value than the others.</p>
+				</div>
+				<div class="infobox">
+					<h1 id="cluster" class="infoheader">EzAAI cluster <span style="font-size:60%;font-weight:normal">- hierarchical clustering of taxa with AAI values</span></h1><hr>
+					<p>Run following to perform hierarchical clustering on the matrix provided from the previous step.</p>
+					<figure class="highlight">
+						<pre><span style="color:#888888">$</span> <strong>ezaai cluster -i out/aai.tsv -o out/sample.nwk</strong></pre>
+						<hr>
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">AAI matrix identified. Running hierarchical clustering with UPGMA method...</span></pre>
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Task finished.</span></pre>
+					</figure>
+					<p>Resulting file is in a Newick format, which you can either look at it as a text,</p>
+					<figure class="highlight">
+						<pre><span style="color:#888888">$</span> <strong>cat out/sample.nwk</strong><hr>(((Microbacterium hominis:9.325725,Microbacterium aurum:9.325725):9.500001,<br>(Clavibacter nebraskensis:2.373246,Clavibacter insidiosus:2.373246):16.452480):0.335034,<br>(Leucobacter muris:5.622289,Leucobacter chironomi:5.622289):13.538471);</pre>
+					</figure>
+					<p>or as a tree visualized with different external programs such as MEGA.</p>
+					<img src="images/tree_mega.png" style="max-width:100%;padding:1rem 5%">
+					<div class="callout callout-primary">
+						<h6>Nicely done!</h6>
+						<p>This is the end of the tutorial. You are now ready to use EzAAI for extensive studies considering AAI values. Feel free to email us if you have any additional questions to ask, want some technical difficulties to be solved, or wish to give us some kind suggestions for improvement. <a href="mailto:endix1029@snu.ac.kr" target="_top" style="color:black"><i class="fa fa-envelope-o"></i></a></p>
+					</div>
+				</div>
+				<div id="bottom" class="infoheader"></div>
+			</div>
+		</div></div>
+		<div class="bd-sidebar">
+			<nav id="bd-docs-nav">
+				<ul class="nav bd-sidenav">
+					<li><a href="#sample"><strong>Dataset</strong></a></li>
+					<li><a href="#extract"><strong>EzAAI extract</strong></a></li>
+					<li><a href="#calculate"><strong>EzAAI calculate</strong></a></li>
+					<li><a href="#cluster"><strong>EzAAI cluster</strong></a></li>
+					<li><a href="#top" style="font-size:90%">Back to top</a></li>
+				</ul>
+			</nav>
+		</div>
+	</section>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/ezaai"><img src="images/ezaai_logowork-160px.svg" width="30"> EzAAI</a>
+			</div>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarsExampleDefault"
+				aria-controls="navbarsExampleDefault" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="/ezaai">Home</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/tutorial">Tutorial</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/download">Download</a></li>
+					<li class="nav-item"><a class="nav-link" href="https://github.com/lebsnu/ezaai" target="_blank" rel="noopener noreferrer"><i class="fa fa-github"></i> GitHub</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/data">Data</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/citation">Cite us</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<script>
+		$(document).ready(function() {
+			var pname = window.location.pathname;
+			var phead = '/ezaai';
+			if(pname.split('/').length > 2){
+				phead = phead + '/' + pname.split('/')[2];
+			}
+			$('.navbar-nav > li > a[href="'+ phead +'"]').parent().addClass('active');
+		})
+	</script>
+	<footer class="footer align-middle" style="padding:0 0;z-index:5">
+		<p style="height:3rem; margin-top:1rem!important">&copy; <a class="a-footer" href="http://leb.snu.ac.kr/" target="_blank" rel="noopener noreferrer">Laboratory of Evolutionary Bioinformatics</a>, Seoul
+			National University. 2021-</p>
+	</footer>
+</body>
+</html>

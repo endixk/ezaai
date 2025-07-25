@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EzAAI - Download</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<link rel="shortcut icon" href="images/ezaai_logowork-16px.ico" type="image/x-icon">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+	crossorigin="anonymous"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+	crossorigin="anonymous"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9B3HSS9PWF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-9B3HSS9PWF');
+</script>
+<meta charset="EUC-KR">
+<style>
+	.infobox {
+		margin-bottom: 0rem;
+	}
+	.infoheader{
+		padding-top: 2rem;
+		padding-bottom: 1rem;
+	}
+	.btn-dlink{
+		margin-bottom:0;
+		padding:2px 5px;
+		height:30px;
+	}
+
+	.req{
+		font-size:85%;
+		font-family:SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;
+		line-height:1.5;
+	}
+	.req > li{
+		margin-bottom:5px;
+		
+	}
+	pre {
+		margin-bottom:0;
+	}
+	.highlight {
+		padding: 1rem;
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+		background-color: #eeeeee;
+		border-radius: 10px;
+	}
+</style>
+</head>
+<body>
+	<section class="body_section">
+		<div class="container">
+			<!--div class="col-md-10" style="margin-left:auto;margin-right:auto"-->
+			<h1 class="infoheader" style="margin-bottom:2rem">EzAAI - Download</h1>
+			<div class="infobox">
+				<h2 id="start">Quick start with conda</h2>
+				<figure class="highlight">
+					<pre style="margin-bottom: 0">conda install -y -c bioconda ezaai<br>ezaai -h</pre>
+				</figure>
+				<hr>
+			</div>
+			<div class="infobox">
+				<h2 id="resource" class="infoheader">Runnable JAR</h2>
+			<!--/div-->
+			<!--div class="col-md-10" style="margin-left:auto;margin-right:auto"-->
+				<div style="width:50%;display:inline-block">
+					<div style="border:1px solid rgba(0,0,0,.1);border-radius:5px;padding:1rem 1rem">
+					<h5 style="margin-top:.5rem">Latest Release</h5>
+					<ul>
+						<li>Linux/macOS <a class="btn btn-primary btn-sm btn-dlink" style="margin-left:2rem" href="resources/EzAAI.jar" role="button" rel="noopener noreferrer" onclick="gtag('event', 'view_item', {items:[{id:'JAR',name:'EzAAI.jar'}]});">Download</a></li>
+					</ul>
+					<h5 style="margin-top:1rem">Requirements</h5>
+					<ul class="req">
+						<li>Java RE 8+<a class="btn btn-secondary btn-sm btn-dlink" style="height:25px;line-height:1.2;margin-left:3rem" href="https://www.oracle.com/java/technologies/javase-jre8-downloads.html" role="button" target="_blank" rel="noopener noreferrer"><span style="font-size:90%;font-family:sans-serif">Link</span></a></li>
+						<li>Prodigal&nbsp;&nbsp;<a class="btn btn-secondary btn-sm btn-dlink" style="height:25px;line-height:1.2;margin-left:3rem" href="https://github.com/hyattpd/prodigal/releases/" role="button" target="_blank" rel="noopener noreferrer"><span style="font-size:90%;font-family:sans-serif">Link</span></a></li>
+						<li>MMSeqs2&nbsp;&nbsp;&nbsp;<a class="btn btn-secondary btn-sm btn-dlink" style="height:25px;line-height:1.2;margin-left:3rem" href="https://github.com/soedinglab/MMseqs2/releases/" role="button" target="_blank" rel="noopener noreferrer"><span style="font-size:90%;font-family:sans-serif">Link</span></a></li>
+					</ul>
+					<h5 style="margin-top:1rem">Optional</h5>
+					<ul class="req">
+						<li>BLASTp+&nbsp;&nbsp;&nbsp;<a class="btn btn-secondary btn-sm btn-dlink" style="height:25px;line-height:1.2;margin-left:3rem" href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download" role="button" target="_blank" rel="noopener noreferrer"><span style="font-size:90%;font-family:sans-serif">Link</span></a></li>
+						<li>DIAMOND&nbsp;&nbsp;&nbsp;<a class="btn btn-secondary btn-sm btn-dlink" style="height:25px;line-height:1.2;margin-left:3rem" href="https://github.com/bbuchfink/diamond/releases" role="button" target="_blank" rel="noopener noreferrer"><span style="font-size:90%;font-family:sans-serif">Link</span></a></li>
+						</ul>
+					</div>
+				</div>
+				<br><br>
+				<div style="width:50%;display:inline-block">
+					<div style="border:1px solid rgba(0,0,0,.1);border-radius:5px;padding:1rem 1rem">
+					<h5 style="margin-top:.5rem">Previous Releases</h5>
+					<ul>
+						<li><pre>v1.2.3 <a class="btn btn-secondary btn-sm btn-dlink" href="resources/archive/EzAAI_v1.2.3.jar" role="button" rel="noopener noreferrer"><i class="fa fa-download"></i></a></pre>- Bioconda support</li>
+						<li><pre>v1.2.2 <a class="btn btn-secondary btn-sm btn-dlink" href="resources/archive/EzAAI_v1.2.2.jar" role="button" rel="noopener noreferrer"><i class="fa fa-download"></i></a></pre>- Prodigal parellelizaition</li>
+						<li><pre>v1.2.1 <a class="btn btn-secondary btn-sm btn-dlink" href="resources/archive/EzAAI_v1.2.1.jar" role="button" rel="noopener noreferrer"><i class="fa fa-download"></i></a></pre>- Automatic dependency check</li>
+						<li><pre>v1.2 <a class="btn btn-secondary btn-sm btn-dlink" href="resources/archive/EzAAI_v1.2.jar" role="button" rel="noopener noreferrer"><i class="fa fa-download"></i></a></pre>- Stand-alone update</li>
+						<li><pre>v1.1.2 <a class="btn btn-secondary btn-sm btn-dlink" href="resources/archive/EzAAI_v1.1.2.jar" role="button" rel="noopener noreferrer"><i class="fa fa-download"></i></a></pre>- BLASTp+ calculate bug fix</li>
+						<li><pre>v1.1.1 <a class="btn btn-secondary btn-sm btn-dlink" href="resources/archive/EzAAI_v1.1.1.jar" role="button" rel="noopener noreferrer"><i class="fa fa-download"></i></a></pre>- Minor bug fixes</li>
+						<li><pre>v1.1  <a class="btn btn-secondary btn-sm btn-dlink" href="resources/archive/EzAAI_v1.1.jar"  role="button" rel="noopener noreferrer"><i class="fa fa-download"></i></a></pre>- Diamond support (EzAAI calculate)</li>
+						<li><pre>v1.0  <a class="btn btn-secondary btn-sm btn-dlink" href="resources/archive/EzAAI_v1.0.jar"  role="button" rel="noopener noreferrer"><i class="fa fa-download"></i></a></pre>- Initial release</li>
+					</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/ezaai"><img src="images/ezaai_logowork-160px.svg" width="30"> EzAAI</a>
+			</div>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarsExampleDefault"
+				aria-controls="navbarsExampleDefault" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="/ezaai">Home</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/tutorial">Tutorial</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/download">Download</a></li>
+					<li class="nav-item"><a class="nav-link" href="https://github.com/lebsnu/ezaai" target="_blank" rel="noopener noreferrer"><i class="fa fa-github"></i> GitHub</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/data">Data</a></li>
+					<li class="nav-item"><a class="nav-link" href="/ezaai/citation">Cite us</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<script>
+		$(document).ready(function() {
+			var pname = window.location.pathname;
+			var phead = '/ezaai';
+			if(pname.split('/').length > 2){
+				phead = phead + '/' + pname.split('/')[2];
+			}
+			$('.navbar-nav > li > a[href="'+ phead +'"]').parent().addClass('active');
+		})
+	</script>
+	<footer class="footer align-middle" style="padding:0 0;z-index:5">
+		<p style="height:3rem; margin-top:1rem!important">&copy; <a class="a-footer" href="http://leb.snu.ac.kr/" target="_blank" rel="noopener noreferrer">Laboratory of Evolutionary Bioinformatics</a>, Seoul
+			National University. 2021-</p>
+	</footer>
+</body>
+</html>
