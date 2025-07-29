@@ -68,10 +68,18 @@
 		<div class="container">
 			<!--div class="col-md-10" style="margin-left:auto;margin-right:auto"-->
 			<h1 class="infoheader" style="margin-bottom:2rem">EzAAI - Download</h1>
-			<div class="infobox"> <div class="row"> <div class="col-10">
-				<h2 id="start">Quick start with conda</h2>
+			<div class="infobox" style="margin-bottom:2rem"> <div class="row"> <div class="col-10">
+				<h2 id="start">Conda environment (Recommended)</h2>
 				<figure class="highlight">
 					<pre style="margin-bottom: 0">conda install -c bioconda ezaai<br>ezaai -h</pre>
+				</figure>
+				<hr>
+			</div> </div> </div>
+			<div class="infobox"> <div class="row"> <div class="col-10">
+				<h2 id="build">Build from source</h2>
+				<p>Requires Java 8+ and Maven 3+.</p>
+				<figure class="highlight">
+					<pre style="margin-bottom: 0">git clone https://github.com/endixk/ezaai.git<br>cd ezaai<br>mvn clean compile assembly:single<br>java -jar target/EzAAI-*.jar -h</pre>
 				</figure>
 				<hr>
 			</div> </div> </div>
@@ -79,7 +87,7 @@
 				<h2 id="resource" class="infoheader">Runnable JAR</h2>
 			<!--/div-->
 			<!--div class="col-md-10" style="margin-left:auto;margin-right:auto"-->
-				<div class="row"> <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+				<div class="row"> <div class="col-10 col-md-8 col-lg-6">
 					<div style="border:1px solid rgba(0,0,0,.1);border-radius:5px;padding:1rem 1rem">
 					<h5 style="margin-top:.5rem">Latest Release - v1.2.4</h5>
 					<ul>
@@ -99,7 +107,7 @@
 					</div>
 				</div> </div>
 				<br><br>
-				<div class="row"> <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+				<div class="row"> <div class="col-10 col-md-8 col-lg-6">
 					<div style="border:1px solid rgba(0,0,0,.1);border-radius:5px;padding:1rem 1rem">
 					<h5 style="margin-top:.5rem">Archived versions</h5>
 					<ul>

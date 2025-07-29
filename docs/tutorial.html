@@ -152,17 +152,15 @@
 							</tr>
 						</tbody>
 					</table>
-					<p>Press the button below to download a compressed file containing the genome assemblies of the species above.</p>
-					<p><i class="fa fa-download"></i> Download samples (4.9 MB) <a class="btn btn-secondary btn-ufcg" href="resources/EzAAI_samples.zip" role="button" rel="noopener noreferrer" style="float:none;margin-top:0;margin-bottom:2px"><span style="font-size:.7rem;padding:0 2px">EzAAI_samples.zip</span></a>
+					<p>Press the button below to download a compressed file containing the genome assemblies and their metadata of the species above.</p>
+					<p><i class="fa fa-download"></i> Download samples (5.1 MB) <a class="btn btn-secondary btn-ufcg" href="resources/EzAAI_samples.zip" role="button" rel="noopener noreferrer" style="float:none;margin-top:0;margin-bottom:2px"><span style="font-size:.7rem;padding:0 2px">EzAAI_samples.zip</span></a>
 				</div>
 				<div class="infobox">
 					<h1 id="extract" class="infoheader">EzAAI extract <span style="font-size:60%;font-weight:normal">- Extract profile DB from sequences</span></h1><hr>
 					<h5>Run EzAAI extract module</h5>
-					<p>Launch EzAAI extract module on your genomes by entering one of the following commands on your terminal.</p>
+					<p>Launch EzAAI extract module on your genomes by entering the following command on your terminal.</p>
 					<figure class="highlight">
-						<pre><span style="color:#888888">$</span> <strong>ezaai extract -i fasta -o db -l labels.tsv</strong> <span style="color:#888888">// conda env</span></pre>
-						<hr>
-						<pre><span style="color:#888888">$</span> <strong>java -jar EzAAI.jar extract -i fasta -o db -l labels.tsv</strong> <span style="color:#888888">// runnable JAR</span></pre>
+						<pre><span style="color:#888888">$</span> <strong>ezaai extract -i fasta -o db -l labels.tsv</strong> <span style="color:#888888"></span></pre>
 					</figure>
 					<p>EzAAI will automatically produce a CDS profile DBs of the genomes with Prodigal with following prompt.</p>
 					<figure class="highlight">
@@ -180,7 +178,7 @@
 				<div class="infobox">
 					<h1 id="calculate" class="infoheader">EzAAI calculate <span style="font-size:60%;font-weight:normal">- calculate AAI value from profile DBs</span></h1><hr>
 					<h5>Run EzAAI calculate module</h5>
-					<p>Simply enter the following one-liner to perform all-by-all pairwise AAI calculation on the extracted profiles from above.</p>
+					<p>Enter the following to perform all-by-all pairwise AAI calculation on the extracted profiles from above.</p>
 					<figure class="highlight">
 						<pre><span style="color:#888888">$</span> <strong>ezaai calculate -i db/ -j db/ -o out/aai.tsv</strong></pre>
 					</figure>
