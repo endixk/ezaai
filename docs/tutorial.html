@@ -158,25 +158,17 @@
 				<div class="infobox">
 					<h1 id="extract" class="infoheader">EzAAI extract <span style="font-size:60%;font-weight:normal">- Extract profile DB from sequences</span></h1><hr>
 					<h5>Run EzAAI extract module</h5>
-					<p>Launch EzAAI extract module on your first genome by entering one of the following commands on your terminal.</p>
+					<p>Launch EzAAI extract module on your genomes by entering one of the following commands on your terminal.</p>
 					<figure class="highlight">
-						<pre><span style="color:#888888">$</span> <strong>ezaai extract -i fasta/Cn.fasta -o db/Cn.db -l "Clavibacter nebraskensis"</strong> <span style="color:#888888">// conda env</span></pre>
+						<pre><span style="color:#888888">$</span> <strong>ezaai extract -i fasta -o db -l labels.tsv</strong> <span style="color:#888888">// conda env</span></pre>
 						<hr>
-						<pre><span style="color:#888888">$</span> <strong>java -jar EzAAI.jar extract -i fasta/Cn.fasta -o db/Cn.db -l "Clavibacter nebraskensis"</strong> <span style="color:#888888">// runnable JAR</span></pre>
+						<pre><span style="color:#888888">$</span> <strong>java -jar EzAAI.jar extract -i fasta -o db -l labels.tsv</strong> <span style="color:#888888">// runnable JAR</span></pre>
 					</figure>
-					<p>EzAAI will automatically produce a CDS profile DB of the genome with Prodigal with following prompt.</p>
+					<p>EzAAI will automatically produce a CDS profile DBs of the genomes with Prodigal with following prompt.</p>
 					<figure class="highlight">
-						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Running prodigal on genome fasta/Cn.fasta...</span></pre>
-						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Converting given CDS file into profile database... (fasta/Cn.fasta.faa -> db/Cn.db)</span></pre>
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Database extraction completed: sample/db/Cn.db</span></pre>
+						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">...</span></pre>
 						<pre><strong style="color:#11ccff">EzAAI |: </strong><span style="color:#444444">Task finished.</span></pre>
-					</figure>
-					<p>Now enter the followings to run the same process on the other genomes provided.</p>
-					<figure class="highlight">
-						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Ci.fasta -o db/Ci.db -l "Clavibacter insidiosus"</pre>
-						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Mh.fasta -o db/Mh.db -l "Microbacterium hominis"</pre>
-						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Ma.fasta -o db/Ma.db -l "Microbacterium aurum"</pre>
-						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Lc.fasta -o db/Lc.db -l "Leucobacter chironomi"</pre>
-						<pre><span style="color:#888888">$</span> ezaai extract -i fasta/Lm.fasta -o db/Lm.db -l "Leucobacter muris"</pre>
 					</figure>
 					<hr>
 					<h5>Check results</h5>
@@ -239,7 +231,7 @@
 				<div id="bottom" class="infoheader"></div>
 			</div>
 		</div></div>
-		<div class="bd-sidebar">
+		<div class="bd-sidebar d-none d-md-block">
 			<nav id="bd-docs-nav">
 				<ul class="nav bd-sidenav">
 					<li><a href="#sample"><strong>Dataset</strong></a></li>

@@ -200,3 +200,8 @@ p{
 .profile_image:hover{
   opacity: 1;
 }
+
+.button-group a {
+  margin-right: 1rem;
+  margin-bottom: 0.4rem;
+}
