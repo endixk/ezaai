@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>EzAAI</groupId>
     <artifactId>EzAAI</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
 
     <dependencies>
         <dependency>
