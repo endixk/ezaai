@@ -143,6 +143,14 @@ public class EzAAI {
 			} else {
 				String path = new File(output).getAbsolutePath();
 				String parent = path.substring(0, path.lastIndexOf(File.separator));
+				if(!(new File(parent)).exists()) {
+					if(!(new File(parent)).mkdirs()) {
+						Prompt.error("Failed to create parent directory for the output file: " + parent);
+						return -1;
+					} else {
+						Prompt.talk("Created parent directory for the output file: " + parent);
+					}
+				}
 				if(!(new File(parent)).canWrite()) {
 					Prompt.error("Output file is allocated to a non-writable directory: " + parent);
 					return -1;
