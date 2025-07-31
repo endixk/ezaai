@@ -6,7 +6,7 @@ name: Maven Package
 on:
   push:
     branches-ignore:
-      - 'pages'
+      - 'gh-pages'
 
 jobs:
   build:
