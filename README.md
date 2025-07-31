@@ -5,14 +5,14 @@
 
 EzAAI is a suite of workflows for improved AAI calculation performance along with the novel module that provides hierarchical clustering analysis and dendrogram representation.
 
- * [Homepage](http://leb.snu.ac.kr/ezaai)
+ * [Homepage](http://endixk.github.io/ezaai)
  * [Publication](https://doi.org/10.1007/s12275-021-1154-0)
 
 
 ## Quick start with conda
 
 ~~~bash
-conda install -c bioconda -y ezaai
+conda install -c bioconda ezaai
 ezaai -h
 ~~~
 
@@ -29,7 +29,7 @@ java -jar target/EzAAI-*.jar -h
 
 ## Available modules
 ### `extract`
- * Extract protein database from genome using Prodigal
+ * Extract protein database(s) from genome using Prodigal
 
 ~~~bash
 ezaai extract -i <IN_SEQ> -o <OUT_DB>
@@ -37,8 +37,8 @@ ezaai extract -i <IN_SEQ> -o <OUT_DB>
 
 |Argument|Description|
 |:-:|-----------------|
-|`-i`|Input prokaryotic genome sequence|
-|`-o`|Output database|
+|`-i`|Input file or directory with prokaryotic genome sequence(s)|
+|`-o`|Output file or directory|
 
 ---
 
