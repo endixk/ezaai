@@ -32,7 +32,7 @@ import java.util.concurrent.Future;
 
 public class EzAAI {
 	public static final String VERSION  = "v1.2.4",
-							   RELEASE  = "Aug. 2024",
+							   RELEASE  = "Jul. 2025",
 							   CITATION = " Kim, D., Park, S. & Chun, J.\n"
 							   			+ " Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity.\n"
 							   			+ " J Microbiol. 59, 476–480 (2021).\n"
