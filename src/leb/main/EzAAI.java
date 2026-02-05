@@ -37,7 +37,7 @@ public class EzAAI {
 							   			+ " Introducing EzAAI: a pipeline for high throughput calculations of prokaryotic average amino acid identity.\n"
 							   			+ " J Microbiol. 59, 476–480 (2021).\n"
 							   			+ " DOI: 10.1007/s12275-021-1154-0";
-	public static final boolean STABLE  = true;
+	public static final boolean STABLE  = false;
 	
 	final static int MODULE_CONVERT 	= 1,
 					 MODULE_EXTRACT 	= 2,
@@ -526,7 +526,7 @@ public class EzAAI {
 		// list files in input directory
 		ArrayList<String> files = new ArrayList<>();
 		for(String file : Objects.requireNonNull(inputDir.list())) {
-			if(file.endsWith(".fa") || file.endsWith(".fna") || file.endsWith(".fasta")) {
+			if(file.endsWith(".fa") || file.endsWith(".fna") || file.endsWith(".fasta") || file.endsWith(".fa.gz") || file.endsWith(".fna.gz") || file.endsWith(".fasta.gz")) {
 				files.add(inputDir.getAbsolutePath() + File.separator + file);
 			}
 		}
