@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 import leb.util.seq.Blast6FormatHitDomain;
 import leb.util.common.FileRemover;
@@ -167,25 +169,31 @@ public class ProcCalcPairwiseAAI {
 		res.add(String.valueOf(n2));
 		res.add(String.valueOf(n1));
 
-		double[][] viceMatrix = new double[n1][n2], versaMatrix = new double[n1][n2];
-		int[][] viceLength = new int[n1][n2], versaLength = new int[n1][n2];
+		// Sparse hit storage keyed by packed (i, j). The dense implementation
+		// allocated four n1 x n2 matrices (24 bytes/cell) whose peak footprint
+		// scaled with proteome sizes rather than hit counts (e.g. ~1.21 GiB for
+		// a 7,840 x 6,921 pair); only passing hits are stored here instead.
+		Map<Long, Double> viceMatrix = new HashMap<>(), versaMatrix = new HashMap<>();
+		Map<Long, Integer> viceLength = new HashMap<>(), versaLength = new HashMap<>();
 		int hcnt = 0;
 		for(Blast6FormatHitDomain hit : hits_vice){
 			if(hit.getIdentity() * fac >= identity && ((double) (hit.getEndInQuery() - hit.getStartInQuery()) / lengthMap.get(hit.getQuery().split(" ")[0])) >= coverage){
-				viceMatrix[nameMap1.get(hit.getTarget().split(" ")[0])][nameMap2.get(hit.getQuery().split(" ")[0])] = hit.getIdentity() * fac;
-				viceLength[nameMap1.get(hit.getTarget().split(" ")[0])][nameMap2.get(hit.getQuery().split(" ")[0])] = hit.getAlignmentLength();
+				long key = packKey(nameMap1.get(hit.getTarget().split(" ")[0]), nameMap2.get(hit.getQuery().split(" ")[0]));
+				viceMatrix.put(key, hit.getIdentity() * fac);
+				viceLength.put(key, hit.getAlignmentLength());
 				hcnt++;
 				if(hcnt < 10) Prompt.debug(String.format("Forward hit #%d : %s\tvs.%s\t= %.3f", hcnt, hit.getTarget().split(" ")[0], hit.getQuery().split(" ")[0], hit.getIdentity() * fac));
 			}
 		}
 		Prompt.talk(String.format("%d forward hits found.", hcnt));
 		res.add(String.valueOf(hcnt));
-		
+
 		hcnt = 0;
 		for(Blast6FormatHitDomain hit : hits_versa){
 			if(hit.getIdentity() * fac >= identity && ((double) (hit.getEndInQuery() - hit.getStartInQuery()) / lengthMap.get(hit.getQuery().split(" ")[0])) >= coverage){
-				versaMatrix[nameMap1.get(hit.getQuery().split(" ")[0])][nameMap2.get(hit.getTarget().split(" ")[0])] = hit.getIdentity() * fac;
-				versaLength[nameMap1.get(hit.getQuery().split(" ")[0])][nameMap2.get(hit.getTarget().split(" ")[0])] = hit.getAlignmentLength();
+				long key = packKey(nameMap1.get(hit.getQuery().split(" ")[0]), nameMap2.get(hit.getTarget().split(" ")[0]));
+				versaMatrix.put(key, hit.getIdentity() * fac);
+				versaLength.put(key, hit.getAlignmentLength());
 				hcnt++;
 				if(hcnt < 10) Prompt.debug(String.format("Backward hit #%d : %s\tvs.%s\t= %.3f", hcnt, hit.getQuery().split(" ")[0], hit.getTarget().split(" ")[0], hit.getIdentity() * fac));
 			}
@@ -193,29 +201,31 @@ public class ProcCalcPairwiseAAI {
 		Prompt.talk(String.format("%d backward hits found.", hcnt));
 		res.add(String.valueOf(hcnt));
 		
-		// Calculate arithmetic mean of identities
+		// Calculate arithmetic mean of identities over reciprocal hits. Keys are
+		// packed as (i << 32 | j), so ascending key order is exactly the row-major
+		// (i, then j) traversal of the dense matrices; the float summation order,
+		// and therefore every printed digit, is preserved bit for bit.
 		int nval = 0; double isum = .0; int lsum = 0;
-		for(int i = 0; i < n1; i++){
-			for(int j = 0; j < n2; j++){
-				if(viceMatrix[i][j] >= identity && versaMatrix[i][j] >= identity){
-					nval++;
-					isum += viceMatrix[i][j] + versaMatrix[i][j];
-					lsum += viceLength[i][j] + versaLength[i][j];
-					if(maw != null) {
-						try {
-							maw.write(String.format("%d\t%d\t%s\t%s\t%s\t%s\t%.3f\t%.3f\t%.3f\n",
-									Math.abs(label1.hashCode()) % (1<<30), Math.abs(label2.hashCode()) % (1<<30),
-									label1, label2, nameList1.get(j), nameList2.get(i),
-									viceMatrix[i][j], versaMatrix[i][j], (viceMatrix[i][j] + versaMatrix[i][j]) / 2));
-						} catch(IOException e) {
-							Prompt.error("FATAL ERROR : Failed to write match output.");
-							return null;
-						}
+		Set<Long> recipKeys = new TreeSet<>(viceMatrix.keySet());
+		recipKeys.retainAll(versaMatrix.keySet());
+		for(long key : recipKeys){
+			int i = (int) (key >> 32), j = (int) key;
+			double vice = viceMatrix.get(key), versa = versaMatrix.get(key);
+			if(vice >= identity && versa >= identity){
+				nval++;
+				isum += vice + versa;
+				lsum += viceLength.get(key) + versaLength.get(key);
+				if(maw != null) {
+					try {
+						maw.write(String.format("%d\t%d\t%s\t%s\t%s\t%s\t%.3f\t%.3f\t%.3f\n",
+								Math.abs(label1.hashCode()) % (1<<30), Math.abs(label2.hashCode()) % (1<<30),
+								label1, label2, nameList1.get(j), nameList2.get(i),
+								vice, versa, (vice + versa) / 2));
+					} catch(IOException e) {
+						Prompt.error("FATAL ERROR : Failed to write match output.");
+						return null;
 					}
 				}
-				/* else if(viceMatrix[i][j] >= 40.0 || versaMatrix[i][j] >= 40.0) {
-					Prompt.debug(String.format("Non-reciprocal hit : %.3f / %.3f", viceMatrix[i][j], versaMatrix[i][j]));
-				} */
 			}
 		}
 		
@@ -233,7 +243,11 @@ public class ProcCalcPairwiseAAI {
 		res.add(String.valueOf(isum / (nval * 2)));
 		return res;
 	}
-	
+
+	private static long packKey(int i, int j) {
+		return (((long) i) << 32) | (j & 0xFFFFFFFFL);
+	}
+
 	private List<String> pairwiseBlastp(String faa1, String faa2) throws IOException {
 		// Read sequence lengths
 		BufferedReader 	br1 = new BufferedReader(new FileReader(faa1)),
